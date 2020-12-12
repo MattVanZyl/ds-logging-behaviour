@@ -1,0 +1,11 @@
+image: ds_logging_behaviour
+version: latest
+
+input_folder: ./input/
+input_file: ./input/1000data.csv
+
+assembler:
+  default: extractor
+
+semgrep_logcount: 'https://semgrep.dev/s/KrishnaTejaJ:log-individual2'
+semgrep_loglevel: 'https://semgrep.dev/s/KrishnaTejaJ:log-level3'
