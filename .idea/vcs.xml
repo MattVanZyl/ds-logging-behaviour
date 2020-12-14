@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/BEGAN" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/bat-country" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/non_data_science/mythril" vcs="Git" />
   </component>
 </project>

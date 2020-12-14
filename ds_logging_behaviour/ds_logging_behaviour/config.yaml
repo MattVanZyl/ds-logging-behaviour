@@ -3,6 +3,8 @@ version: latest
 
 input_folder: ./input/
 input_file: ./input/1000data.csv
+output_folder: ./output/
+output_file: ./output/LogMetrics-Summarized.csv
 
 assembler:
   default: extractor

@@ -9,7 +9,11 @@ __pycache__/
 
 # Distribution / packaging
 build/
-input/
+input/*
+output/
+
+# Repo Data
+!input/1000data.csv
 
 ## Python egg metadata, regenerated from source files by setuptools.
 **/*.egg-info
