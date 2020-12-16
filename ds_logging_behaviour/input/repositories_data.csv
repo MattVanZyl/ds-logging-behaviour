@@ -1,10 +1,4 @@
 api_link,repo_link,type
 https://api.github.com/repos/artcg/BEGAN,https://github.com/artcg/BEGAN,data_science
 https://api.github.com/repos/jrosebr1/bat-country,https://github.com/jrosebr1/bat-country,data_science
-https://api.github.com/repos/pender/chatbot-rnn,https://github.com/pender/chatbot-rnn,data_science
-https://api.github.com/repos/nicholastoddsmith/poeai,https://github.com/nicholastoddsmith/poeai,data_science
-https://api.github.com/repos/minerva-ml/open-solution-data-science-bowl-2018,https://github.com/minerva-ml/open-solution-data-science-bowl-2018,data_science
 https://api.github.com/repos/ConsenSys/mythril,https://github.com/ConsenSys/mythril,non_data_science
-https://api.github.com/repos/felipevolpone/ray,https://github.com/felipevolpone/ray,non_data_science
-https://api.github.com/repos/markstory/lint-review,https://github.com/markstory/lint-review,non_data_science
-https://api.github.com/repos/nypl-spacetime/map-vectorizer,https://github.com/nypl-spacetime/map-vectorizer,non_data_science

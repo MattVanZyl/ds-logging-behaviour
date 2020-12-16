@@ -136,7 +136,7 @@ def export_gini(config):
         diffs = sum(abs(i - j) for i, j in combinations(x, r=2))
         return diffs / (n ** 2 * x.mean())
 
-    log_metrics_data = pd.read_csv(f"{config['output_path']}FINAL.csv")
+    log_metrics_data = pd.read_csv(f"{config['output_path']}final.csv")
     final_list = []
     repo_list = ['Type of Repo', 'Repo Name', 'Repo GiniIndex', 'File GiniIndex', 'Class GiniIndex', 'Method GiniIndex',
                  'File GiniIndex Info', 'File GiniIndex Error', 'File GiniIndex Warning', 'File GiniIndex Debug',
@@ -146,7 +146,7 @@ def export_gini(config):
                  'Method GiniIndex Debug', 'Method GiniIndex Trace', 'Method GiniIndex Fatal']
     # print(log_metrics_data.head(20))
     for row in range(0, log_metrics_data.shape[0]):
-        if log_metrics_data.iloc[row, 0] in ['DataScience', 'NonDataScience']:
+        if log_metrics_data.iloc[row, 0] in ['data_science', 'non_data_science']:
             # print(repo_list)
             final_list.append(repo_list)
             gini_list = []
@@ -157,7 +157,7 @@ def export_gini(config):
             repo_list.append(gini_repo)
         else:
             if row != log_metrics_data.shape[0] - 1:
-                if log_metrics_data.iloc[row + 1, 0] not in ['DataScience', 'NonDataScience']:
+                if log_metrics_data.iloc[row + 1, 0] not in ['data_science', 'non_data_science']:
                     for col in range(10, 31):
                         gini_list[col - 10].append(log_metrics_data.iloc[row, col])
                 else:
