@@ -42,7 +42,7 @@ class DataExtractor(Stage):
             repo_details[repo_name]['Repo Link'] = repo_links[i]
 
             # Create a data_science and non_data_science directory
-            dir = f"{config['input_folder']}repo_data/{types[i]}"
+            dir = f"{config['input_path']}repo_data/{types[i]}"
             Path(dir).mkdir(parents=True, exist_ok=True)
 
             # Clone the repo
@@ -52,9 +52,9 @@ class DataExtractor(Stage):
             # =============================================
             # Log Count
             # =============================================
-            repo_log_count = {}
             output = json.loads(
-                subprocess.check_output(f"semgrep -f {config['semgrep_logcount']} {repo_name} --json", shell=True))
+                subprocess.check_output(f"semgrep --config ../../../{config['semgrep_logcount']} {repo_name} --json", shell=True))
+                #subprocess.check_output(f"semgrep -f {config['semgrep_logcount']} {repo_name} --json", shell=True))
 
             repo_log_counts[repo_name] = {'print': 0, 'logging': 0, 'trace-traceback': 0, 'io-file.write': 0,
                                          'stderr': 0}
@@ -63,13 +63,19 @@ class DataExtractor(Stage):
                 # for stoping the redundancy of sys.stderr in io and stdrr, """ is to avoid conflict when formatting is used
                 if file_in_repo['check_id'] == 'stderr':
                     repo_log_counts[repo_name]['io-file.write'] -= 1
-                repo_log_counts[repo_name][file_in_repo['check_id']] += 1
+
+                # Remove the "input" at the start of the "check_id"
+                check_id = file_in_repo['check_id'].split('.',1)[1]
+                repo_log_counts[repo_name][check_id] += 1
+
 
             # =============================================
             # Log Level
             # =============================================
-            output2 = json.loads(subprocess.check_output(f"semgrep -f {config['semgrep_loglevel']} {repo_name} --json", shell=True))
-
+            output2 = json.loads(
+                subprocess.check_output(f"semgrep --config ../../../{config['semgrep_loglevel']} {repo_name} --json",
+                                        shell=True))
+                # subprocess.check_output(f"semgrep -f {config['semgrep_loglevel']} {repo_name} --json", shell=True))
 
 
             repo_log_levels[repo_name] = {}
@@ -108,7 +114,7 @@ class DataExtractor(Stage):
             os.chdir(f"{working_dir}")
 
             # Create a data_science and non_data_science directory
-            log_vs_nlog = f"{config['input_folder']}log_vs_nonlog/"
+            log_vs_nlog = f"{config['input_path']}log_vs_nonlog/"
             Path(log_vs_nlog).mkdir(parents=True, exist_ok=True)
 
             repo_path = f"{dir}/{repo_name}/"
@@ -124,7 +130,7 @@ class DataExtractor(Stage):
 
 # changes json for adding the data to the final format
 def changesjson(config):
-    files = f"{config['input_folder']}log_vs_nonlog/*.txt"
+    files = f"{config['input_path']}log_vs_nonlog/*.txt"
     logvsnlog_changes = {}
     for repo_changes in glob.glob(files, recursive=True):
         log_lines = []

@@ -1,0 +1,121 @@
+rules:
+- id: class_
+  pattern: |
+    class $A(...):
+      ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: method_
+  pattern: |
+    def $B(...):
+      ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: end_line_
+  patterns:
+    - pattern-regex: '(.*)$'
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: info
+  patterns:
+    - pattern-either:
+      - pattern: |
+          print(...)
+      - pattern: |
+          logging.$C(...)
+      - pattern: |
+          $D.write(...)
+      - pattern: |
+          io.$E(...)
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: error
+  patterns:
+    - pattern-either:
+      - pattern: |
+          print("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          io.$F("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          $G.write("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          sys.stderr.write(...)
+      - pattern: |
+          logging.error(...)
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: warning
+  patterns:
+    - pattern-either:
+      - pattern: |
+          print("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
+      - pattern: |
+          logging.warning(...)
+      - pattern: |
+          io.$H("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
+      - pattern: |
+          $I.write("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: debug
+  patterns:
+    - pattern-either:
+      - pattern: |
+          logging.debug(...)
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: trace
+  patterns:
+    - pattern-either:
+      - pattern: |
+          trace.$J(...)
+      - pattern: |
+          traceback.$K(...)
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+- id: fatal
+  patterns:
+    - pattern-either:
+      - pattern: |
+          print("=~/.*[fF][aA][tT][aA][lL].*/")
+      - pattern: |
+          io.$L("=~/.*[fF][aA][tT][aA][lL].*/")
+      - pattern: |
+          $M.write("=~/.*[fF][aA][tT][aA][lL].*/")
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING

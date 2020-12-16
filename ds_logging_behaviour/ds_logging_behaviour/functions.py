@@ -17,7 +17,6 @@ def read_json(fname):
         data = json.load(f)
     return data
 
-
 def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
     final_list = []
     cnt = 0
@@ -56,7 +55,7 @@ def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
         cnt += 1
 
     # For adding all the data to the LogMetrics-Summarized.csv
-    with open(f"{config['output_folder']}LogMetrics-Summarized.csv", 'w', newline='') as file:
+    with open(f"{config['output_path']}LogMetrics-Summarized.csv", 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(
             ['Repo Type', 'Repo Name', 'Repo Link', 'Number of Lines', 'Logging', 'Trace-Traceback', 'Stderr', 'Print',
@@ -71,15 +70,20 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
 
     for repo_name, level_data in log_levels.items():
         # To add the all the repo related data in the before hand
-        final_list.append([repo_details[repo_name]['Type'], repo_name, repo_details[repo_name]['Repo Link'], log_counts[repo_name]['logging'],
-                           log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],
-                           log_counts[repo_name]['io-file.write']])
-        final_list[cnt].extend(["-"] * 23)
-        final_list[cnt].extend([log_vs_nonlog[repo_name]['logchanges'], log_vs_nonlog[repo_name]['nonlogchanges']])
-        cnt += 1
+
+        # final_list.append([repo_details[repo_name]['Type'], repo_name, repo_details[repo_name]['Repo Link'], log_counts[repo_name]['logging'],
+        #                    log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],
+        #                    log_counts[repo_name]['io-file.write']])
+        # final_list[cnt].extend(["-"] * 23)
+        # final_list[cnt].extend([log_vs_nonlog[repo_name]['logchanges'], log_vs_nonlog[repo_name]['nonlogchanges']])
+
+        # cnt += 1
+
         # flag_r = 0
         # Log Level
         for file_, log_data in level_data.items():
+            final_list.append([repo_details[repo_name]['Type'], repo_name, repo_details[repo_name]['Repo Link'],log_counts[repo_name]['logging'],log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],log_counts[repo_name]['io-file.write']])
+
             class_counts = {}
             method_counts = {}
             total_classes, total_methods = 0, 0
@@ -120,8 +124,9 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
                 log_den_class = log_count / total_classes
             if 'method_' in log_data.keys() and total_methods != 0:
                 log_den_method = log_count / total_methods
+
             # if flag_r == 1:
-            final_list.append([""] * 8)
+            # final_list.append([""] * 8)
             final_list[cnt].extend(
                 [file_, log_data['end_line_']['line'], log_den_file, log_den_class, log_den_method,
                  log_count_sep['info'], log_count_sep['error'], log_count_sep['warning'],
@@ -129,11 +134,12 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
                  log_count_sep_class['info'], log_count_sep_class['error'], log_count_sep_class['warning'],
                  log_count_sep_class['debug'], log_count_sep_class['trace'], log_count_sep_class['fatal'],
                  log_count_sep_method['info'], log_count_sep_method['error'], log_count_sep_method['warning'],
-                 log_count_sep_method['debug'], log_count_sep_method['trace'], log_count_sep_method['fatal'],
-                 "", ""])
+                 log_count_sep_method['debug'], log_count_sep_method['trace'], log_count_sep_method['fatal']])
             '''if flag_r == 0:
                 final_list[cnt].extend(["-"] * 23)
                 final_list[cnt].extend([logvsnlog[repo]['logchanges'] , logvsnlog[repo]['nonlogchanges']])'''
+
+            final_list[cnt].extend([log_vs_nonlog[repo_name]['logchanges'], log_vs_nonlog[repo_name]['nonlogchanges']])
 
             # flag_r = 1
             cnt += 1
@@ -143,7 +149,7 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
 
 
     # For adding all the data to the FINAL.csv
-    with open(f"{config['output_folder']}FINAL.csv", 'w', newline='') as file:
+    with open(f"{config['output_path']}FINAL.csv", 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['DataScience/NonDataScience', 'Repo Name', 'Repo Link', 'Instances of Log - Logger',
                          'Instances of Log - Trace/Traceback', 'Instances of Log -StdErr',
