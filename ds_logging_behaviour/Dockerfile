@@ -7,8 +7,7 @@ WORKDIR /app
 COPY requirements.txt /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip3 install --trusted-host pypi.python.org -r requirements.txt \
-&& git --version
+RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
 # Copy the current directory contents into the container at /app
 COPY . /app

@@ -12,6 +12,6 @@ logging.basicConfig(level=logging.INFO)
 class FileSystemRunner(Runner):
 
     def load_data(self, mode, config):
-        df = pd.read_csv(config["input_file"])
+        df = pd.read_csv(f"{config['input_path']}{config['input_file']}")
         state = AssemblerState(df)
         return state

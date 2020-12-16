@@ -9,13 +9,9 @@ __pycache__/
 
 # Distribution / packaging
 build/
-input/*
+input/repo_data/
+input/log_vs_nonlog/
 output/
-
-# Repo Data
-!input/1000data.csv
-!input/semgrep.yaml
-!input/level_semgrep.yaml
 
 ## Python egg metadata, regenerated from source files by setuptools.
 **/*.egg-info

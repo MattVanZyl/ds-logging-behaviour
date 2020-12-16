@@ -1,21 +1,8 @@
-from .fields import LinkFields
-import json
+from itertools import combinations
+from typing import List
 import csv
-
-def initialise(repo_data):
-    api_links = repo_data[LinkFields.API_LINK]
-    repo_links = repo_data[LinkFields.REPO_LINK]
-    types = repo_data[LinkFields.TYPE]
-    return api_links, repo_links, types
-
-def save_json(dictionary, fname = 'output.json'):
-    with open(fname, "w") as output:
-        json.dump(dictionary, output)
-
-def read_json(fname):
-    with open(fname) as f:
-        data = json.load(f)
-    return data
+import pandas as pd
+import numpy as np
 
 def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
     final_list = []
@@ -23,7 +10,7 @@ def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
 
     for repo, repodata in log_levels.items():
         # To add the all the repo related data in the before hand
-        final_list.append([repo_details[repo]['Type'], repo, repo_details[repo]['Repo Link']])
+        final_list.append([repo_details[repo]['type'], repo, repo_details[repo]['repo_link']])
         total = {'class_': 0, 'method_': 0, 'end_line_': 0, 'info': 0, 'error': 0, 'warning': 0, 'debug': 0, 'trace': 0,
                  'fatal': 0}
         files_count = 0
@@ -54,8 +41,7 @@ def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
              total['warning'], total['error'], total['fatal'], total['trace'], log_level_lines])
         cnt += 1
 
-    # For adding all the data to the LogMetrics-Summarized.csv
-    with open(f"{config['output_path']}LogMetrics-Summarized.csv", 'w', newline='') as file:
+    with open(f"{config['output_path']}log_metrics_summarized.csv", 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(
             ['Repo Type', 'Repo Name', 'Repo Link', 'Number of Lines', 'Logging', 'Trace-Traceback', 'Stderr', 'Print',
@@ -64,25 +50,14 @@ def export_summary(config, repo_details, log_count, log_levels, log_vs_nonlog):
              'Total Error Type', 'Total Fatal type', 'Total Trace type', "Actual Log Lines"])
         writer.writerows(final_list)
 
-def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
+def export_final(config, repo_details, log_counts, log_levels, log_vs_nonlog):
     final_list = []
     cnt = 0
 
     for repo_name, level_data in log_levels.items():
-        # To add the all the repo related data in the before hand
-
-        # final_list.append([repo_details[repo_name]['Type'], repo_name, repo_details[repo_name]['Repo Link'], log_counts[repo_name]['logging'],
-        #                    log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],
-        #                    log_counts[repo_name]['io-file.write']])
-        # final_list[cnt].extend(["-"] * 23)
-        # final_list[cnt].extend([log_vs_nonlog[repo_name]['logchanges'], log_vs_nonlog[repo_name]['nonlogchanges']])
-
-        # cnt += 1
-
-        # flag_r = 0
         # Log Level
         for file_, log_data in level_data.items():
-            final_list.append([repo_details[repo_name]['Type'], repo_name, repo_details[repo_name]['Repo Link'],log_counts[repo_name]['logging'],log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],log_counts[repo_name]['io-file.write']])
+            final_list.append([repo_details[repo_name]['type'], repo_name, repo_details[repo_name]['repo_link'],log_counts[repo_name]['logging'],log_counts[repo_name]['trace-traceback'], log_counts[repo_name]['stderr'], log_counts[repo_name]['print'],log_counts[repo_name]['io-file.write']])
 
             class_counts = {}
             method_counts = {}
@@ -125,8 +100,6 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
             if 'method_' in log_data.keys() and total_methods != 0:
                 log_den_method = log_count / total_methods
 
-            # if flag_r == 1:
-            # final_list.append([""] * 8)
             final_list[cnt].extend(
                 [file_, log_data['end_line_']['line'], log_den_file, log_den_class, log_den_method,
                  log_count_sep['info'], log_count_sep['error'], log_count_sep['warning'],
@@ -135,21 +108,12 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
                  log_count_sep_class['debug'], log_count_sep_class['trace'], log_count_sep_class['fatal'],
                  log_count_sep_method['info'], log_count_sep_method['error'], log_count_sep_method['warning'],
                  log_count_sep_method['debug'], log_count_sep_method['trace'], log_count_sep_method['fatal']])
-            '''if flag_r == 0:
-                final_list[cnt].extend(["-"] * 23)
-                final_list[cnt].extend([logvsnlog[repo]['logchanges'] , logvsnlog[repo]['nonlogchanges']])'''
 
             final_list[cnt].extend([log_vs_nonlog[repo_name]['logchanges'], log_vs_nonlog[repo_name]['nonlogchanges']])
 
-            # flag_r = 1
             cnt += 1
 
-        '''if flag_r == 0:
-            final_list[cnt].extend(["-"] * 23)'''
-
-
-    # For adding all the data to the FINAL.csv
-    with open(f"{config['output_path']}FINAL.csv", 'w', newline='') as file:
+    with open(f"{config['output_path']}final.csv", 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['DataScience/NonDataScience', 'Repo Name', 'Repo Link', 'Instances of Log - Logger',
                          'Instances of Log - Trace/Traceback', 'Instances of Log -StdErr',
@@ -163,4 +127,54 @@ def finalcalc(config, repo_details, log_counts, log_levels, log_vs_nonlog):
                          'Log Level Method - Warning', 'Log Level Method - Debug', 'Log Level Method - Trace',
                          'Log Level Method - Fatal', 'DataScience Related Changes',
                          'Non DataScience Related Changes'])
+        writer.writerows(final_list)
+
+def export_gini(config):
+    def gini(x: List[float]) -> float:
+        x = np.array(x, dtype=np.float32)
+        n = len(x)
+        diffs = sum(abs(i - j) for i, j in combinations(x, r=2))
+        return diffs / (n ** 2 * x.mean())
+
+    log_metrics_data = pd.read_csv(f"{config['output_path']}FINAL.csv")
+    final_list = []
+    repo_list = ['Type of Repo', 'Repo Name', 'Repo GiniIndex', 'File GiniIndex', 'Class GiniIndex', 'Method GiniIndex',
+                 'File GiniIndex Info', 'File GiniIndex Error', 'File GiniIndex Warning', 'File GiniIndex Debug',
+                 'File GiniIndex Trace', 'File GiniIndex Fatal', 'Class GiniIndex Info', 'Class GiniIndex Error',
+                 'Class GiniIndex Warning', 'Class GiniIndex Debug', 'Class GiniIndex Trace', 'Class GiniIndex Fatal',
+                 'Method GiniIndex Info', 'Method GiniIndex Error', 'Method GiniIndex Warning',
+                 'Method GiniIndex Debug', 'Method GiniIndex Trace', 'Method GiniIndex Fatal']
+    # print(log_metrics_data.head(20))
+    for row in range(0, log_metrics_data.shape[0]):
+        if log_metrics_data.iloc[row, 0] in ['DataScience', 'NonDataScience']:
+            # print(repo_list)
+            final_list.append(repo_list)
+            gini_list = []
+            for _ in range(21):
+                gini_list.append([])
+            repo_list = [log_metrics_data.iloc[row, 0], log_metrics_data.iloc[row, 1]]
+            gini_repo = gini([log_metrics_data.iloc[row, index] for index in range(3, 8)])
+            repo_list.append(gini_repo)
+        else:
+            if row != log_metrics_data.shape[0] - 1:
+                if log_metrics_data.iloc[row + 1, 0] not in ['DataScience', 'NonDataScience']:
+                    for col in range(10, 31):
+                        gini_list[col - 10].append(log_metrics_data.iloc[row, col])
+                else:
+                    gini_sep_ = []
+                    for col in range(0, 21):
+                        gini_sep_.append(gini(gini_list[col]))
+                    repo_list.extend(gini_sep_)
+            else:
+                for col in range(10, 31):
+                    gini_list[col - 10].append(log_metrics_data.iloc[row, col])
+                gini_sep_ = []
+                for col in range(0, 21):
+                    gini_sep_.append(gini(gini_list[col]))
+                repo_list.extend(gini_sep_)
+                final_list.append(repo_list)
+
+    # For writing all the gini index values to gini_index.csv
+    with open(f"{config['output_path']}gini_index.csv", 'w', newline='') as file:
+        writer = csv.writer(file)
         writer.writerows(final_list)

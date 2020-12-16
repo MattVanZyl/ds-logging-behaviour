@@ -8,6 +8,5 @@ from surround import State
 class AssemblerState(State):
     def __init__(self, input_data):
         super().__init__()
-
         self.input_data = input_data
         self.output_data = None
