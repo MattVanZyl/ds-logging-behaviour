@@ -1,14 +1,8 @@
-"""
-This module defines the input validator which is executed
-before all other stages in the pipeline and checks whether
-the data contained in the State object is valid.
-"""
-
 from surround import Stage
 import os
 from pathlib import Path
 import glob
-from ..fields import LinkFields
+from ..fields import Fields
 
 import subprocess
 import json

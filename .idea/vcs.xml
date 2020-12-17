@@ -4,6 +4,39 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/BEGAN" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/bat-country" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/chatbot-rnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/open-solution-data-science-bowl-2018" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/data_science/poeai" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repo_data/non_data_science/mythril" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/data_science/BEGAN" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/data_science/bat-country" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/data_science/chatbot-rnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/data_science/open-solution-data-science-bowl-2018" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/data_science/poeai" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/non_data_science/clip.py" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/non_data_science/lint-review" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/non_data_science/map-vectorizer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/non_data_science/mythril" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ds_logging_behaviour/input/repos/non_data_science/ray" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/BEGAN" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/YOLOv3-tensorflow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/bat-country" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/chatbot-rnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/deep-learning-benchmark" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/image-compression-cnn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/loss-landscape" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/neural-network-genetic-algorithm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/open-solution-data-science-bowl-2018" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/data_science/poeai" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/TwitterAPI" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/clip.py" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/flask-cloudy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/lint-review" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/location-history-json-converter" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/mahotas" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/map-vectorizer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/mythril" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/nacho" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repos/non_data_science/ray" vcs="Git" />
   </component>
 </project>

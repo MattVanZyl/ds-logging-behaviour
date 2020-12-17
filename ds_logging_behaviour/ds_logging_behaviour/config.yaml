@@ -1,13 +1,15 @@
 image: ds_logging_behaviour
 version: latest
 
+repos_path: ../repos/
+
 input_path: ./input/
 input_file: repositories_data.csv
 
 output_path: ./output/
 
 assembler:
-  default: extractor
+  default: downloader
 
 semgrep_path: ./input/semgrep/
 semgrep_count_rules: count_rules.yaml

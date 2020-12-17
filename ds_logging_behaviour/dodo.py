@@ -197,6 +197,21 @@ def task_batch_local():
         'params': PARAMS
     }
 
+def task_download_repos():
+    """Download all the repositories required"""
+    cmd = [
+        sys.executable,
+        "-m %s" % PACKAGE_PATH,
+        "--mode batch",
+        "%(args)s"
+    ]
+
+    return {
+        'basename': 'downloadRepos',
+        'actions': [" ".join(cmd)],
+        'params': PARAMS
+    }
+
 def task_build_jupyter():
     """Build the Docker image for a Jupyter Lab notebook"""
     return {

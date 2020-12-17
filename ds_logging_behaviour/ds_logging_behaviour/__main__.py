@@ -6,7 +6,8 @@ Runners and assemblies are defined in here.
 import os
 import argparse
 from surround import Surround, Assembler, has_config
-from .stages import DataExtractor, InputValidator
+# from .stages import DataExtractor, InputValidator
+from .stages import RepoDownloader
 from .file_system_runner import FileSystemRunner
 
 RUNNERS = [
@@ -14,8 +15,10 @@ RUNNERS = [
 ]
 
 ASSEMBLIES = [
-    Assembler("extractor")
-        .set_stages([InputValidator(), DataExtractor()])
+    Assembler("downloader")
+        .set_stages([RepoDownloader()])
+    #Assembler("extractor")
+        #.set_stages([InputValidator(), DataExtractor()])
 ]
 
 @has_config
@@ -26,7 +29,6 @@ def main(config=None):
     parser = argparse.ArgumentParser(
         prog='ds_logging_behaviour',
         description="Surround mode(s) available to run this module")
-
     parser.add_argument(
         '-r',
         '--runner',
