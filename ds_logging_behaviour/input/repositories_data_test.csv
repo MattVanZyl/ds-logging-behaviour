@@ -1,0 +1,6 @@
+name,url,commit,type
+BEGAN,https://github.com/artcg/BEGAN,39d5f745d52f146c0bbdf6eed68f30ed274bb6f4,DS
+bat-country,https://github.com/jrosebr1/bat-country,894af13bd777ab8aa989baf520db074b97cfad9a,DS
+chatbot-rnn,https://github.com/pender/chatbot-rnn,82cbb710beaf15da11b60e03f00bdbfd521df754,DS
+poeai,https://github.com/nicholastoddsmith/poeai,894af13bd777ab8aa989baf520db074b97cfad9a,DS
+pytorch-caffe-darknet-convert,https://github.com/marvis/pytorch-caffe-darknet-convert,,DS

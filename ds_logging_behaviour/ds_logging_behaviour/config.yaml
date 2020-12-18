@@ -1,10 +1,10 @@
 image: ds_logging_behaviour
 version: latest
 
-repos_path: ../repos/
+repositories_path: ../repositories/
 
 input_path: ./input/
-input_file: repositories_data.csv
+input_file: repositories_data_test.csv #repositories_data.csv
 
 output_path: ./output/
 
@@ -13,4 +13,4 @@ assembler:
 
 semgrep_path: ./input/semgrep/
 semgrep_count_rules: count_rules.yaml
-semgrep_level_rules: levels_rules.yaml
+semgrep_level_rules: level_rules.yaml

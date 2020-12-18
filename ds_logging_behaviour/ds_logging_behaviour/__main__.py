@@ -7,7 +7,7 @@ import os
 import argparse
 from surround import Surround, Assembler, has_config
 # from .stages import DataExtractor, InputValidator
-from .stages import RepoDownloader
+from .stages import RepoDownloader, DataExtractor
 from .file_system_runner import FileSystemRunner
 
 RUNNERS = [
@@ -16,9 +16,9 @@ RUNNERS = [
 
 ASSEMBLIES = [
     Assembler("downloader")
-        .set_stages([RepoDownloader()])
-    #Assembler("extractor")
-        #.set_stages([InputValidator(), DataExtractor()])
+        .set_stages([RepoDownloader()]),
+    Assembler("extractor")
+        .set_stages([RepoDownloader(),DataExtractor()])
 ]
 
 @has_config

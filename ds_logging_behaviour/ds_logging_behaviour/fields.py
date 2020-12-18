@@ -1,4 +1,5 @@
 class Fields:
-    API_LINK = "api_link"
-    REPO_LINK = "repo_link"
+    NAME = "name"
+    URL = "url"
+    COMMIT = "commit"
     TYPE = "type"

@@ -203,11 +203,28 @@ def task_download_repos():
         sys.executable,
         "-m %s" % PACKAGE_PATH,
         "--mode batch",
+        "-a downloader",
         "%(args)s"
     ]
 
     return {
         'basename': 'downloadRepos',
+        'actions': [" ".join(cmd)],
+        'params': PARAMS
+    }
+
+def task_extract_data():
+    """Extracts data from the downloaded repos"""
+    cmd = [
+        sys.executable,
+        "-m %s" % PACKAGE_PATH,
+        "--mode batch",
+        "-a extractor",
+        "%(args)s"
+    ]
+
+    return {
+        'basename': 'extractData',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }

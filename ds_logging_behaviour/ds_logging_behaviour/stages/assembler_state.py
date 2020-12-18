@@ -10,3 +10,5 @@ class AssemblerState(State):
         super().__init__()
         self.input_data = input_data
         self.output_data = None
+        self.repos = {}
+
