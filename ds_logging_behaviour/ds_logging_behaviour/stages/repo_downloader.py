@@ -22,10 +22,6 @@ class RepoDownloader(Stage):
         for repo_name in repositories.keys():
             local_path = f"{config['repositories_path']}{repositories[repo_name]['type']}/{repository_id}"
 
-            state.repos[repo_name] = {}
-            state.repos[repo_name]['path'] = local_path
-            state.repos[repo_name]['type'] = repositories[repo_name]['type']
-
             download_successful = False
 
             try:

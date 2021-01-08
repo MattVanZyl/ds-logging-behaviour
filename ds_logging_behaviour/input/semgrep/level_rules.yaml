@@ -1,7 +1,20 @@
 rules:
-- id: info
+- id: DEBUG
   patterns:
     - pattern-either:
+        - pattern: |
+            logging.debug(...)
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+- id: INFO
+  patterns:
+    - pattern-either:
+      - pattern: |
+          logging.info(...)
       - pattern: |
           print(...)
       - pattern: |
@@ -16,32 +29,13 @@ rules:
   languages: [python]
   severity: WARNING
 
-- id: error
+- id: WARNING
   patterns:
     - pattern-either:
-      - pattern: |
-          print("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          io.$F("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          $G.write("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          sys.stderr.write(...)
-      - pattern: |
-          logging.error(...)
-  message: |
-    Match found
-  fix: |
-  languages: [python]
-  severity: WARNING
-
-- id: warning
-  patterns:
-    - pattern-either:
-      - pattern: |
-          print("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
       - pattern: |
           logging.warning(...)
+      - pattern: |
+          print("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
       - pattern: |
           io.$H("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
       - pattern: |
@@ -52,33 +46,30 @@ rules:
   languages: [python]
   severity: WARNING
 
-- id: debug
+- id: ERROR
   patterns:
     - pattern-either:
       - pattern: |
-          logging.debug(...)
+          logging.error(...)
+      - pattern: |
+          print("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          io.$F("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          $G.write("=~/.*[eE][rR][rR][oO][rR].*/")
+      - pattern: |
+          sys.stderr.write(...)
   message: |
     Match found
   fix: |
   languages: [python]
   severity: WARNING
 
-- id: trace
+- id: CRITICAL
   patterns:
     - pattern-either:
       - pattern: |
-          trace.$J(...)
-      - pattern: |
-          traceback.$K(...)
-  message: |
-    Match found
-  fix: |
-  languages: [python]
-  severity: WARNING
-
-- id: fatal
-  patterns:
-    - pattern-either:
+          logging.critical(...)
       - pattern: |
           print("=~/.*[fF][aA][tT][aA][lL].*/")
       - pattern: |

@@ -1,9 +1,14 @@
 # ds_logging_behaviour
 
+## Run project
+In a terminal navigate to the `ds-logging-behaviour/ds_logging_behaviour`
 
-
-# Run project
-Run the following commands from the root directory:
+Run the following commands:
 `pip3 install -r requirements.txt`
-`surround run batchLocal`
+
+To download the repos:
+`surround run downloadRepos`
+
+To extract log data from the repos after they have been downloaded:
+`surround run extractData`
 
