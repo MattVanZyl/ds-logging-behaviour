@@ -1,27 +1,70 @@
 from surround import Stage
 from ..print_colours import PrintColours
+from ..functions import getrepos
 import logging
 import subprocess
+import pandas as pd
+from pathlib import Path
+import json
+import os
+
 
 class DataExtractor(Stage):
 
     def operate(self, state, config):
-
         logging.info(
             f"\n{PrintColours.CYAN}{PrintColours.BOLD}---------------------------------\nExtracting Data From Repositories\n---------------------------------{PrintColours.RESET}")
 
-        for repo_name in state.repos.keys():
-            repo_path = state.repos[repo_name]['path']
+        repos = getrepos(config)
 
-            # NOTE: At the moment all of the 'check_id' values will be prepended with 'input.semgrep' which matches the folder structure.
-            # To remove this you have to change directory to the semgrep yaml file location and then run the semgrep command
+        working_dir = Path().absolute()
 
-            # Get repo log counts
-            logging.info(f" {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting log counts...{PrintColours.RESET}")
-            counts_path = f"{config['input_path']}log_data/counts/log_counts_{repo_name}.json"
-            subprocess.call(f"semgrep --config {config['semgrep_path']}{config['semgrep_count_rules']} {repo_path} --json -o {counts_path}", shell=True)
+        repo_logs = {}
 
-            # Get repo log levels
-            logging.info(f" {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting log levels...{PrintColours.RESET}")
-            counts_path = f"{config['input_path']}log_data/levels/log_levels_{repo_name}.json"
-            subprocess.call(f"semgrep --config {config['semgrep_path']}{config['semgrep_level_rules']} {repo_path} --json -o {counts_path}",shell=True)
+        # NOTE: The 'check_id' values will be prepended with 'input.semgrep' if the semgrep rules are run from the default working directory.
+        # To remove the prepended 'input.semgrep' we change the working directory to the semgrep config file location
+        os.chdir(f"{config['semgrep_path']}")
+
+        log_levels_df = pd.DataFrame(
+            columns=['repository-id', 'project-type', 'project-name', 'file-name', 'line-number', 'log-level',
+                     'log-statement'])
+
+        # For each repo:
+        for repository_id in repos.keys():
+            repo_name = repos[repository_id]['name']
+            repo_path = repos[repository_id]['path']
+            repo_type = repos[repository_id]['type']
+
+            logging.info(
+                f" {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting log levels...{PrintColours.RESET}")
+
+            log_levels = json.loads(subprocess.check_output(
+                f"semgrep --config {config['semgrep_level_rules']} ../../{repo_path} --json",
+                shell=True))
+
+            repo_logs[repository_id] = []
+
+            # For each log found in the semgrep search:
+            for result in log_levels['results']:
+                log_entry = {}
+                log_entry['project-type'] = repo_type
+                log_entry['project-name'] = repo_name
+                log_entry['file-name'] = result['path'].split('/')[-1]
+                log_entry['line-number'] = result['start']['line']
+                log_entry['log-level'] = result['check_id']
+                log_entry['log-statement'] = result['extra']['lines'].strip()
+                repo_logs[repository_id].append(log_entry)
+
+            for entry in repo_logs[repository_id]:
+                log_levels_df = log_levels_df.append(
+                    {'repository-id': repository_id, 'project-type': entry['project-type'],
+                     'project-name': entry['project-name'], 'file-name': entry['file-name'],
+                     'line-number': entry['line-number'], 'log-level': entry['log-level'], 'log-statement': entry['log-statement']},
+                    ignore_index=True)
+
+        # Reset the working directory
+        os.chdir(f"{working_dir}")
+
+        log_levels_df.to_csv(f"{config['output_path']}log-levels.csv", index=False)
+
+

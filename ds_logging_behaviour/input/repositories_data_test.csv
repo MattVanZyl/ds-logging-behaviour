@@ -1,6 +1,11 @@
 name,url,commit,type
-BEGAN,https://github.com/artcg/BEGAN,39d5f745d52f146c0bbdf6eed68f30ed274bb6f4,DS
-bat-country,https://github.com/jrosebr1/bat-country,894af13bd777ab8aa989baf520db074b97cfad9a,DS
-chatbot-rnn,https://github.com/pender/chatbot-rnn,82cbb710beaf15da11b60e03f00bdbfd521df754,DS
-poeai,https://github.com/nicholastoddsmith/poeai,894af13bd777ab8aa989baf520db074b97cfad9a,DS
-pytorch-caffe-darknet-convert,https://github.com/marvis/pytorch-caffe-darknet-convert,,DS
+keras-gcn,https://github.com/tkipf/keras-gcn,eb89564a0e865640c11283991685d80c84bc602a,DS
+DeepPavlov,https://github.com/deepmipt/DeepPavlov,b4dc56a3bf337007f9fb15fd47f6b57d21911ddf,DS
+RMDL,https://github.com/kk7nc/RMDL,c8547a22486b749cd7acc0ce5d96a874dde3346a,DS
+darkflow,https://github.com/thtrieu/darkflow,eb7e830393f24233032b8578737141528be01d65,DS
+open-solution-data-science-bowl-2018,https://github.com/minerva-ml/open-solution-data-science-bowl-2018,5874c22600c2cb5b731fe9bce7d3f72a2ed11e5e,DS
+pg_view,https://github.com/zalando/pg_view,3b35609f34b25db861252e2ce9912c2dab8a7934,Non-DS
+pyGPs,https://github.com/marionmari/pyGPs,792f3c6cb91126ade9f23a8e39d9cbcd30cfbc7b,Non-DS
+bitcoin-code,https://github.com/shirriff/bitcoin-code,e791d034a01aeafe871366c457192873f4783fd0,Non-DS
+python-markdown2,https://github.com/trentm/python-markdown2,252317f0e74ba7687f33d8e78d25ee3ad869dd38,Non-DS
+pi_video_looper,https://github.com/adafruit/pi_video_looper,b317c29d6f7dcd9b41cecd51cc5b8a34c9ae3e18,Non-DS

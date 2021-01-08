@@ -13,45 +13,51 @@ class RepoDownloader(Stage):
         repositories = self.initialise(state.input_data)
 
         logging.info(
-            f"\n{PrintColours.CYAN}{PrintColours.BOLD}-----------------------\nSetting Up Repositories\n-----------------------{PrintColours.RESET}")
+            f"\n{PrintColours.CYAN}{PrintColours.BOLD}------------------------\nDownloading Repositories\n------------------------{PrintColours.RESET}")
 
-        repo_count = 1
+        repository_id = 0
 
-        failed_downloads_df = pd.DataFrame(columns=['number','name','url'])
+        manifest_df = pd.DataFrame(columns=['repository-id','project-type','project-name','url','local-path','download-successful'])
 
         for repo_name in repositories.keys():
-            download_folder = f"{config['repositories_path']}repository_{repo_count}"
-            local_path = f"{download_folder}/{repo_name}"
+            local_path = f"{config['repositories_path']}{repositories[repo_name]['type']}/{repository_id}"
 
             state.repos[repo_name] = {}
             state.repos[repo_name]['path'] = local_path
             state.repos[repo_name]['type'] = repositories[repo_name]['type']
 
+            download_successful = False
+
             try:
                 # Check if repo already exists
-                GitRepository(local_path)._open_repository()
+                GitRepository(f'{local_path}/{repo_name}')._open_repository()
                 logging.info(
-                    f" {repo_count}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Already downloaded{PrintColours.RESET}")
+                    f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Already downloaded{PrintColours.RESET}")
+                download_successful = True
 
             except NoSuchPathError:
                 try:
                     # Otherwise, clone the repo
                     logging.info(
-                        f" {repo_count}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Cloning...{PrintColours.RESET}")
-                    Path(download_folder).mkdir(parents=True, exist_ok=True)
+                        f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Cloning...{PrintColours.RESET}")
+                    Path(local_path).mkdir(parents=True, exist_ok=True)
                     # Clone the specified commit, if no commit is provided then clone the latest
                     RepositoryMining(repositories[repo_name]['url'],
                                      from_commit=repositories[repo_name]['commit'])._clone_remote_repo(
-                        tmp_folder=download_folder, repo=repositories[repo_name]['url'])
+                        tmp_folder=local_path, repo=repositories[repo_name]['url'])
+                    download_successful = True
 
                 except GitCommandError as err:
                     logging.info(
-                        f" {repo_count}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.RED}Download failed:{PrintColours.RESET}\n{err.stderr}")
-                    failed_downloads_df = failed_downloads_df.append({'number': repo_count,'name': repo_name,'url': repositories[repo_name]['url']}, ignore_index=True)
+                        f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.RED}Download failed:{PrintColours.RESET}\n{err.stderr}")
+                    Path(local_path).rmdir()
 
-            repo_count += 1
+            manifest_df = manifest_df.append(
+                {'repository-id': repository_id, 'project-type': repositories[repo_name]['type'],
+                 'project-name': repo_name, 'url': repositories[repo_name]['url'], 'local-path': Path(local_path).absolute(), 'download-successful': f'{download_successful}'}, ignore_index=True)
+            repository_id += 1
 
-        failed_downloads_df.to_csv(f"{config['repositories_path']}failed_downloads.csv", index=False)
+        manifest_df.to_csv(f"{config['repositories_path']}repo-manifest.csv", index=False)
 
     def initialise(self, repo_data):
         repo_details = {}
