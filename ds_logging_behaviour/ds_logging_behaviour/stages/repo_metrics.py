@@ -7,6 +7,7 @@ import pandas as pd
 from pathlib import Path
 import json
 import os
+from pydriller import GitRepository, RepositoryMining
 
 class RepoMetrics(Stage):
 
@@ -25,7 +26,8 @@ class RepoMetrics(Stage):
         os.chdir(f"{config['semgrep_path']}")
 
         repo_metrics_df = pd.DataFrame(
-            columns=['repository-id', 'project-type', 'project-name', 'total-file-count', 'python-file-count', 'class-count', 'method-count'])
+            columns=['repository-id', 'project-type', 'project-name', 'total-file-count', 'python-file-count',
+                     'class-count', 'method-count', 'lines-of-code'])
 
         # For each repo:
         for repository_id in repos.keys():
@@ -44,6 +46,8 @@ class RepoMetrics(Stage):
 
             class_count = 0
             method_count = 0
+            lines_of_code = 0
+            python_file_count = 0
 
             # For each log found in the semgrep search:
             for result in metrics['results']:
@@ -51,11 +55,23 @@ class RepoMetrics(Stage):
                     class_count += 1
                 elif result['check_id'] == 'method-count':
                     method_count += 1
+                #elif result['check_id'] == 'lines-of-code':
+                    #lines_of_code += result['start']['line']
+                    # logging.info(result['path'].split('/')[-1])
 
+            files = GitRepository(f'../../{repo_path}').files()
+            # Get the count of all the files in the repo
+            total_file_count = len(files)
+
+            # Get the count of all the python files in the repo
+            for i in files:
+                if i.split(".")[-1] == "py":
+                    python_file_count += 1
 
             repo_metrics_df = repo_metrics_df.append(
                 {'repository-id': repository_id, 'project-type': repo_type,
-                 'project-name': repo_name, 'total-file-count' : 0, 'python-file-count' : 0, 'class-count' : class_count, 'method-count':method_count },
+                 'project-name': repo_name, 'total-file-count': total_file_count, 'python-file-count': python_file_count, 'class-count': class_count,
+                 'method-count': method_count, 'lines-of-code': lines_of_code},
                 ignore_index=True)
 
         # Reset the working directory

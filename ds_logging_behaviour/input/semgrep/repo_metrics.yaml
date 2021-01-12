@@ -18,3 +18,12 @@ rules:
   fix: |
   languages: [ python ]
   severity: WARNING
+
+- id: lines-of-code
+  patterns:
+    - pattern-regex: '(.*)$'
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
