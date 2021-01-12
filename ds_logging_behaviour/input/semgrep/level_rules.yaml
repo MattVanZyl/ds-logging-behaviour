@@ -2,44 +2,23 @@ rules:
 - id: DEBUG
   patterns:
     - pattern-either:
-        - pattern: |
-            logging.debug(...)
+      - pattern: $LOGGER.debug(...)
+      - pattern: print("=~/debug/i")
+      - pattern: print("=~/debug/i",...)
+      - pattern: print("=~/debug/i"+...)
   message: |
     Match found
   fix: |
   languages: [ python ]
   severity: WARNING
 
-- id: INFO
-  patterns:
-    - pattern-either:
-      - pattern: |
-          logging.info(...)
-      - pattern: |
-          print(...)
-      - pattern: |
-          logging.$C(...)
-      - pattern: |
-          $D.write(...)
-      - pattern: |
-          io.$E(...)
-  message: |
-    Match found
-  fix: |
-  languages: [python]
-  severity: WARNING
-
 - id: WARNING
   patterns:
     - pattern-either:
-      - pattern: |
-          logging.warning(...)
-      - pattern: |
-          print("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
-      - pattern: |
-          io.$H("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
-      - pattern: |
-          $I.write("=~/.*[wW][aA][rR][nN][iI][nN][gG].*/")
+      - pattern: $LOGGER.warning(...)
+      - pattern: print("=~/warning/i")
+      - pattern: print("=~/warning/i",...)
+      - pattern: print("=~/warning/i"+...)
   message: |
     Match found
   fix: |
@@ -49,16 +28,10 @@ rules:
 - id: ERROR
   patterns:
     - pattern-either:
-      - pattern: |
-          logging.error(...)
-      - pattern: |
-          print("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          io.$F("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          $G.write("=~/.*[eE][rR][rR][oO][rR].*/")
-      - pattern: |
-          sys.stderr.write(...)
+      - pattern: $LOGGER.error(...)
+      - pattern: print("=~/error/i")
+      - pattern: print("=~/error/i",...)
+      - pattern: print("=~/error/i"+...)
   message: |
     Match found
   fix: |
@@ -68,16 +41,26 @@ rules:
 - id: CRITICAL
   patterns:
     - pattern-either:
-      - pattern: |
-          logging.critical(...)
-      - pattern: |
-          print("=~/.*[fF][aA][tT][aA][lL].*/")
-      - pattern: |
-          io.$L("=~/.*[fF][aA][tT][aA][lL].*/")
-      - pattern: |
-          $M.write("=~/.*[fF][aA][tT][aA][lL].*/")
+      - pattern: $LOGGER.critical(...)
+      - pattern: print("=~/critical/i")
+      - pattern: print("=~/critical/i",...)
+      - pattern: print("=~/critical/i"+...)
   message: |
     Match found
   fix: |
   languages: [python]
+  severity: WARNING
+
+- id: INFO
+  patterns:
+    - pattern-either:
+      - pattern: $LOGGER.info(...)
+      - pattern: print(...)
+    - pattern-not: print("=~/error|critical|debug|warning/i",...)
+    - pattern-not: print("=~/error|critical|debug|warning/i"+...)
+    - pattern-not: print("=~/error|critical|debug|warning/i")
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
   severity: WARNING

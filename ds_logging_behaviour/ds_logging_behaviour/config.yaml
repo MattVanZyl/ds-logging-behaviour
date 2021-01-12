@@ -12,5 +12,5 @@ assembler:
   default: downloader
 
 semgrep_path: ./input/semgrep/
-semgrep_count_rules: count_rules.yaml
+semgrep_repo_metrics: repo_metrics.yaml
 semgrep_level_rules: level_rules.yaml

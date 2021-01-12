@@ -955,6 +955,16 @@
     <mapping directory="$PROJECT_DIR$/repos/repo_1/neural-network-genetic-algorithm" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/repos/repo_1/open-solution-data-science-bowl-2018" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/repos/repo_1/poeai" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/DS/0/keras-gcn" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/DS/1/DeepPavlov" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/DS/2/RMDL" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/DS/3/darkflow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/DS/4/open-solution-data-science-bowl-2018" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/Non-DS/5/pg_view" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/Non-DS/6/pyGPs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/Non-DS/7/bitcoin-code" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/Non-DS/8/python-markdown2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/repositories/Non-DS/9/pi_video_looper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/repositories/repository_1/BEGAN" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/repositories/repository_2/bat-country" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/repositories/repository_3/chatbot-rnn" vcs="Git" />

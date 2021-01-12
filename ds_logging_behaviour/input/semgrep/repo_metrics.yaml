@@ -1,0 +1,20 @@
+rules:
+- id: class-count
+  pattern: |
+    class $CLASS(...):
+      ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+- id: method-count
+  pattern: |
+    def $METHOD(...):
+      ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
