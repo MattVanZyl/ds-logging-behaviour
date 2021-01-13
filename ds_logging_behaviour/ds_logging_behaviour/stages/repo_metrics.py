@@ -8,7 +8,8 @@ from pathlib import Path
 import json
 import os
 from pydriller import GitRepository
-from pygount import SourceAnalysis,ProjectSummary
+from pygount import SourceAnalysis, ProjectSummary
+
 
 class RepoMetrics(Stage):
 
@@ -22,8 +23,8 @@ class RepoMetrics(Stage):
 
         repo_metrics = {}
 
-        # NOTE: The 'check_id' values will be prepended with 'input.semgrep' if the semgrep rules are run from the default working directory.
-        # To remove the prepended 'input.semgrep' we change the working directory to the semgrep config file location
+        # NOTE: The 'check_id' values in the semgrep results will be prepended with 'input.semgrep', which matches the semgrep file locations relative to the working directory.
+        # To remove the prepended 'input.semgrep' we change the working directory to the semgrep file location.
         os.chdir(f"{config['semgrep_path']}")
 
         repo_metrics_df = pd.DataFrame(
@@ -47,8 +48,6 @@ class RepoMetrics(Stage):
 
             class_count = 0
             method_count = 0
-            lines_of_code = 0
-            python_file_count = 0
 
             # For each log found in the semgrep search:
             for result in metrics['results']:
@@ -72,14 +71,12 @@ class RepoMetrics(Stage):
                 source_analysis = SourceAnalysis.from_file(file, "repo")
                 project_summary.add(source_analysis)
 
-            logging.info(f'File count: {project_summary.total_file_count} vs our: {python_file_count}')
-            logging.info(f'Code count: {project_summary.total_code_count} with empty: {PrintColours.RED}{project_summary.total_empty_count}{PrintColours.RESET} and string: {project_summary.total_string_count}')
-
             lines_of_code = project_summary.total_code_count
 
             repo_metrics_df = repo_metrics_df.append(
                 {'repository-id': repository_id, 'project-type': repo_type,
-                 'project-name': repo_name, 'total-file-count': total_file_count, 'python-file-count': python_file_count, 'class-count': class_count,
+                 'project-name': repo_name, 'total-file-count': total_file_count,
+                 'python-file-count': python_file_count, 'class-count': class_count,
                  'method-count': method_count, 'lines-of-code': lines_of_code},
                 ignore_index=True)
 

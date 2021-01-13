@@ -21,8 +21,8 @@ class DataExtractor(Stage):
 
         repo_logs = {}
 
-        # NOTE: The 'check_id' values will be prepended with 'input.semgrep' if the semgrep rules are run from the default working directory.
-        # To remove the prepended 'input.semgrep' we change the working directory to the semgrep config file location
+        # NOTE: The 'check_id' values in the semgrep results will be prepended with 'input.semgrep', which matches the semgrep file locations relative to the working directory.
+        # To remove the prepended 'input.semgrep' we change the working directory to the semgrep file location.
         os.chdir(f"{config['semgrep_path']}")
 
         log_levels_df = pd.DataFrame(
@@ -64,12 +64,11 @@ class DataExtractor(Stage):
                 log_levels_df = log_levels_df.append(
                     {'log-id': entry['log-id'], 'repository-id': repository_id, 'project-type': entry['project-type'],
                      'project-name': entry['project-name'], 'file-name': entry['file-name'],
-                     'line-number': entry['line-number'], 'log-level': entry['log-level'], 'log-statement': entry['log-statement']},
+                     'line-number': entry['line-number'], 'log-level': entry['log-level'],
+                     'log-statement': entry['log-statement']},
                     ignore_index=True)
 
         # Reset the working directory
         os.chdir(f"{working_dir}")
 
         log_levels_df.to_csv(f"{config['output_path']}log-levels.csv", index=False)
-
-

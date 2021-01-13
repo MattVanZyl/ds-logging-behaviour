@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def getrepos(config):
     repos = {}
     local_path = f"{config['repositories_path']}"
@@ -11,7 +12,6 @@ def getrepos(config):
                     repo_id = id_folder.name
                     for name_folder in id_folder.iterdir():
                         repo_name = name_folder.name
-
                         repos[repo_id] = {}
                         repos[repo_id]['name'] = repo_name
                         repos[repo_id]['type'] = repo_type
