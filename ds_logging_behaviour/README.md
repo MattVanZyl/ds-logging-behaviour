@@ -12,3 +12,7 @@ To download the repos:
 To extract log data from the repos after they have been downloaded:
 `surround run extractData`
 
+## Troubleshooting
+If you get the error: `ERROR: Cannot uninstall 'ruamel-yaml'`
+Use the following command:
+`pip3 install -r requirements.txt --ignore-installed ruamel.yaml`

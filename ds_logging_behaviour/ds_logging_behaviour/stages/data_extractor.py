@@ -26,8 +26,10 @@ class DataExtractor(Stage):
         os.chdir(f"{config['semgrep_path']}")
 
         log_levels_df = pd.DataFrame(
-            columns=['repository-id', 'project-type', 'project-name', 'file-name', 'line-number', 'log-level',
+            columns=['log-id', 'repository-id', 'project-type', 'project-name', 'file-name', 'line-number', 'log-level',
                      'log-statement'])
+
+        log_id = 0
 
         # For each repo:
         for repository_id in repos.keys():
@@ -47,6 +49,9 @@ class DataExtractor(Stage):
             # For each log found in the semgrep search:
             for result in log_levels['results']:
                 log_entry = {}
+                log_entry['log-id'] = log_id
+                log_id += 1
+                log_entry['project-type'] = repo_type
                 log_entry['project-type'] = repo_type
                 log_entry['project-name'] = repo_name
                 log_entry['file-name'] = result['path'].split('/')[-1]
@@ -57,7 +62,7 @@ class DataExtractor(Stage):
 
             for entry in repo_logs[repository_id]:
                 log_levels_df = log_levels_df.append(
-                    {'repository-id': repository_id, 'project-type': entry['project-type'],
+                    {'log-id': entry['log-id'], 'repository-id': repository_id, 'project-type': entry['project-type'],
                      'project-name': entry['project-name'], 'file-name': entry['file-name'],
                      'line-number': entry['line-number'], 'log-level': entry['log-level'], 'log-statement': entry['log-statement']},
                     ignore_index=True)

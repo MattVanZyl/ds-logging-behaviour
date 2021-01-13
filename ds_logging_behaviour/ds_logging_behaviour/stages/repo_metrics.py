@@ -7,7 +7,8 @@ import pandas as pd
 from pathlib import Path
 import json
 import os
-from pydriller import GitRepository, RepositoryMining
+from pydriller import GitRepository
+from pygount import SourceAnalysis,ProjectSummary
 
 class RepoMetrics(Stage):
 
@@ -55,18 +56,26 @@ class RepoMetrics(Stage):
                     class_count += 1
                 elif result['check_id'] == 'method-count':
                     method_count += 1
-                #elif result['check_id'] == 'lines-of-code':
-                    #lines_of_code += result['start']['line']
-                    # logging.info(result['path'].split('/')[-1])
 
             files = GitRepository(f'../../{repo_path}').files()
+
             # Get the count of all the files in the repo
             total_file_count = len(files)
 
             # Get the count of all the python files in the repo
-            for i in files:
-                if i.split(".")[-1] == "py":
-                    python_file_count += 1
+            python_files = [f for f in files if f.split(".")[-1] == "py"]
+            python_file_count = len(python_files)
+
+            project_summary = ProjectSummary()
+
+            for file in python_files:
+                source_analysis = SourceAnalysis.from_file(file, "repo")
+                project_summary.add(source_analysis)
+
+            logging.info(f'File count: {project_summary.total_file_count} vs our: {python_file_count}')
+            logging.info(f'Code count: {project_summary.total_code_count} with empty: {PrintColours.RED}{project_summary.total_empty_count}{PrintColours.RESET} and string: {project_summary.total_string_count}')
+
+            lines_of_code = project_summary.total_code_count
 
             repo_metrics_df = repo_metrics_df.append(
                 {'repository-id': repository_id, 'project-type': repo_type,

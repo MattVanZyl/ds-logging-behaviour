@@ -9,7 +9,6 @@ __pycache__/
 
 # Distribution / packaging
 build/
-input/log_data/
 output/
 
 ## Python egg metadata, regenerated from source files by setuptools.
