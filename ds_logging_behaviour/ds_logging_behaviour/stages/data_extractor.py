@@ -1,6 +1,6 @@
 from surround import Stage
 from ..print_colours import PrintColours
-from ..functions import getrepos
+from ..functions import get_downloaded_repos
 import logging
 import subprocess
 import pandas as pd
@@ -15,7 +15,7 @@ class DataExtractor(Stage):
         logging.info(
             f"\n{PrintColours.CYAN}{PrintColours.BOLD}---------------------------------\nExtracting Data From Repositories\n---------------------------------{PrintColours.RESET}")
 
-        repos = getrepos(config)
+        repos = get_downloaded_repos(config)
 
         working_dir = Path().absolute()
 

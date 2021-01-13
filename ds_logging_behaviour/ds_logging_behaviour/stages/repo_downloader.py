@@ -56,6 +56,8 @@ class RepoDownloader(Stage):
         manifest_df.to_csv(f"{config['repositories_path']}repo-manifest.csv", index=False)
 
     def initialise(self, repo_data):
+        """Maps the contents of the csv file specified by 'input_file' in config.yaml to a json object.
+        """
         repo_details = {}
         names = repo_data[Fields.NAME]
         urls = repo_data[Fields.URL]

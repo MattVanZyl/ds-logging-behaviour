@@ -1,7 +1,10 @@
 from pathlib import Path
 
 
-def getrepos(config):
+def get_downloaded_repos(config):
+    """Get the details of all the downloaded repos.
+    Returns a json object that has each repo_id mapped to it's corresponding name, type and local path.
+    """
     repos = {}
     local_path = f"{config['repositories_path']}"
     for type_folder in Path(local_path).iterdir():
