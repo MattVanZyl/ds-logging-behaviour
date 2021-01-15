@@ -9,3 +9,13 @@ pyGPs,https://github.com/marionmari/pyGPs,792f3c6cb91126ade9f23a8e39d9cbcd30cfbc
 bitcoin-code,https://github.com/shirriff/bitcoin-code,e791d034a01aeafe871366c457192873f4783fd0,Non-DS
 python-markdown2,https://github.com/trentm/python-markdown2,252317f0e74ba7687f33d8e78d25ee3ad869dd38,Non-DS
 pi_video_looper,https://github.com/adafruit/pi_video_looper,b317c29d6f7dcd9b41cecd51cc5b8a34c9ae3e18,Non-DS
+tensorflow-kr,https://github.com/tensorflowkorea/tensorflow-kr,779d4e1fcaa2e3a6277d1b01804470eb228e8fb0,DS
+AIF360,https://github.com/IBM/AIF360,ec48af4e93a718de8964c5532f3c3b14c58aafe1,DS
+NeuroNLP2,https://github.com/XuezheMax/NeuroNLP2,4ca6b0a9a084078470ec28ba5b59508e65b3871c,DS
+caption_generator,https://github.com/anuragmishracse/caption_generator,4d50e6311beef332d4b8a7d6cc4836eb28300a82,DS
+DeepAlignmentNetwork,https://github.com/MarekKowalski/DeepAlignmentNetwork,d55244b5a65d5ece73684da06d0dc52b8731f3cd,DS
+nacho,https://github.com/avelino/nacho,9ccb46b6dafcffb17dd0da1d7c90829b89aafc5d,Non-DS
+kcc,https://github.com/ciromattia/kcc,4ec4c9966c727d6dac44507d34607bd7d2c5ed5c,Non-DS
+cobbler,https://github.com/cobbler/cobbler,ed118443bcaf6cfbce5acbbb72df797e58ac137f,Non-DS
+esptool,https://github.com/espressif/esptool,dd97d7cb680cb84b5342585fb600d1f6dd2ad99a,Non-DS
+bitHopper,https://github.com/c00w/bitHopper,3825187e7bac430cd48ff4bb41495d771ef8f669,Non-DS

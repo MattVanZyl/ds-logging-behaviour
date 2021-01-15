@@ -6,6 +6,7 @@ rules:
       - pattern: print("=~/debug/i")
       - pattern: print("=~/debug/i",...)
       - pattern: print("=~/debug/i"+...)
+      - pattern: print("=~/debug/i"%...)
   message: |
     Match found
   fix: |
@@ -19,6 +20,7 @@ rules:
       - pattern: print("=~/warning/i")
       - pattern: print("=~/warning/i",...)
       - pattern: print("=~/warning/i"+...)
+      - pattern: print("=~/warning/i"%...)
   message: |
     Match found
   fix: |
@@ -32,6 +34,7 @@ rules:
       - pattern: print("=~/error/i")
       - pattern: print("=~/error/i",...)
       - pattern: print("=~/error/i"+...)
+      - pattern: print("=~/error/i"%...)
   message: |
     Match found
   fix: |
@@ -45,6 +48,7 @@ rules:
       - pattern: print("=~/critical/i")
       - pattern: print("=~/critical/i",...)
       - pattern: print("=~/critical/i"+...)
+      - pattern: print("=~/critical/i"%...)
   message: |
     Match found
   fix: |
@@ -58,6 +62,7 @@ rules:
       - pattern: print(...)
     - pattern-not: print("=~/error|critical|debug|warning/i",...)
     - pattern-not: print("=~/error|critical|debug|warning/i"+...)
+    - pattern-not: print("=~/error|critical|debug|warning/i"%...)
     - pattern-not: print("=~/error|critical|debug|warning/i")
   message: |
     Match found
