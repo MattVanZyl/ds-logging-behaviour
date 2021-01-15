@@ -197,7 +197,7 @@ def task_batch_local():
         'params': PARAMS
     }
 
-def task_download_and_extract():
+def task_download_repos():
     """Download all the repositories required inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
@@ -226,11 +226,11 @@ def task_download_and_extract():
         "--volume \"%s\":/app/output" % output_path,
         "--volume \"%s\":/app/input" % data_path,
         IMAGE,
-        "python3 -m ds_logging_behaviour --mode batch -a downloadAndExtract %(args)s"
+        "python3 -m ds_logging_behaviour --mode batch -a downloader %(args)s"
     ]
 
     return {
-        'basename': 'downloadAndExtract',
+        'basename': 'downloadRepos',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
@@ -247,6 +247,43 @@ def task_download_repos_local():
 
     return {
         'basename': 'downloadReposLocal',
+        'actions': [" ".join(cmd)],
+        'params': PARAMS
+    }
+def task_extract_data():
+    """Extracts data from the downloaded repos, run inside the container"""
+    output_path = CONFIG["volume_path"] + "/output"
+    data_path = CONFIG["volume_path"] + "/input"
+
+    global_config = get_surround_config()
+
+    # Inject user's name and email into the env variables of the container
+    user_name = global_config.get_path("user.name")
+    user_email = global_config.get_path("user.email")
+    experiment_args = "-e \"SURROUND_USER_NAME=%s\" " % user_name
+    experiment_args += "-e \"SURROUND_USER_EMAIL=%s\"" % user_email
+
+    experiment_path = os.path.join(str(Path.home()), ".experiments")
+    experiment_volume_path = generate_docker_volume_path(experiment_path)
+
+    # Ensure experiments will work if using a local storage location (not in the cloud)
+    if os.path.join(experiment_path, "local") == global_config.get_path("experiment.url"):
+        experiment_args += " --volume \"%s\":/experiments " % experiment_volume_path
+        experiment_args += "-e \"SURROUND_EXPERIMENT_URL=/experiments/local\""
+    else:
+        current_url = global_config.get_path("experiment.url")
+        experiment_args += " -e \"SURROUND_EXPERIMENT_URL=%s\"" % current_url
+
+    cmd = [
+        "docker run %s" % experiment_args,
+        "--volume \"%s\":/app/output" % output_path,
+        "--volume \"%s\":/app/input" % data_path,
+        IMAGE,
+        "python3 -m ds_logging_behaviour --mode batch -a extractor %(args)s"
+    ]
+
+    return {
+        'basename': 'extractData',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
