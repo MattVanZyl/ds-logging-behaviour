@@ -18,7 +18,9 @@ ASSEMBLIES = [
     Assembler("downloader")
         .set_stages([RepoDownloader()]),
     Assembler("extractor")
-        .set_stages([RepoMetrics(), DataExtractor()])
+        .set_stages([RepoMetrics(), DataExtractor()]),
+    Assembler("downloadAndExtract")
+        .set_stages([RepoDownloader(), RepoMetrics(), DataExtractor()])
 ]
 
 @has_config

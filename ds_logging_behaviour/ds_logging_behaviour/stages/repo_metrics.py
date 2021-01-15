@@ -19,6 +19,10 @@ class RepoMetrics(Stage):
 
         repos = get_downloaded_repos(config)
 
+        if len(repos) == 0:
+            logging.info(f"{PrintColours.RED}{PrintColours.BOLD}No Repositories Found{PrintColours.RESET}")
+            return
+
         working_dir = Path().absolute()
 
         repo_metrics = {}
