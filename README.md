@@ -1,7 +1,17 @@
+## Requirements
+
+- Docker
+- Python 3
+
+## Setup
+Install Surround:
+`pip install surround==0.1.0`
+`pip install surround_cli==0.0.3`
+
 ## Running In A Container
 In a terminal navigate to the `ds-logging-behaviour/ds_logging_behaviour`
 
-Run the following commands:
+Run the following command to build an image for the container:
 `surround run build`
 
 ### Download Repos
@@ -20,8 +30,6 @@ To extract log data from the repos after they have been downloaded:
 The csvs outputed by the extractor will be located in the output folder, they are `repo-metrics.csv` and `log-level.csv` respectively. 
 
 ## Running Locally 
-
-### Setup
 In a terminal navigate to the `ds-logging-behaviour/ds_logging_behaviour`
 
 Run the following commands:
