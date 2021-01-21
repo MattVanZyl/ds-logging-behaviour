@@ -1,0 +1,16 @@
+image: ds_logging_behaviour
+version: latest
+
+repositories_path: ./output/repositories/
+
+input_path: ./input/
+input_file: repositories_data_test.csv #repositories_data.csv
+
+output_path: ./output/
+
+assembler:
+  default: downloader
+
+semgrep_path: ./input/semgrep/
+semgrep_repo_metrics: repo_metrics.yaml
+semgrep_level_rules: level_rules.yaml

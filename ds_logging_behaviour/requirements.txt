@@ -1,0 +1,7 @@
+surround==0.1.0
+surround_cli==0.0.3
+tornado==6.0.2
+pandas==0.25.2
+semgrep==0.36.0
+pydriller==1.15.4
+pygount==1.2.4
