@@ -15,15 +15,13 @@ class RepoDownloader(Stage):
         logging.info(
             f"\n{PrintColours.CYAN}{PrintColours.BOLD}------------------------\nDownloading Repositories\n------------------------{PrintColours.RESET}")
 
-        repository_id = 0
+        manifest_df = pd.DataFrame(columns=['repository-id','project-type','project-name','url','commit','local-path','download-successful'])
 
-        manifest_df = pd.DataFrame(columns=['repository-id','project-type','project-name','url','local-path','download-successful'])
-
-        for repo_name in repositories.keys():
-            local_path = f"{config['repositories_path']}{repositories[repo_name]['type']}/{repository_id}"
+        for repository_id in repositories.keys():
+            repo_name = repositories[repository_id]['name']
+            local_path = f"{config['repositories_path']}{repositories[repository_id]['type']}/{repository_id}"
 
             download_successful = False
-
             try:
                 # Check if repo already exists
                 GitRepository(f'{local_path}/{repo_name}')._open_repository()
@@ -38,9 +36,9 @@ class RepoDownloader(Stage):
                         f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Cloning...{PrintColours.RESET}")
                     Path(local_path).mkdir(parents=True, exist_ok=True)
                     # Clone the specified commit, if no commit is provided then clone the latest
-                    RepositoryMining(repositories[repo_name]['url'],
-                                     from_commit=repositories[repo_name]['commit'])._clone_remote_repo(
-                        tmp_folder=local_path, repo=repositories[repo_name]['url'])
+                    RepositoryMining(repositories[repository_id]['url'],
+                                     from_commit=repositories[repository_id]['commit'])._clone_remote_repo(
+                        tmp_folder=local_path, repo=repositories[repository_id]['url'])
                     download_successful = True
 
                 except GitCommandError as err:
@@ -49,9 +47,8 @@ class RepoDownloader(Stage):
                     Path(local_path).rmdir()
 
             manifest_df = manifest_df.append(
-                {'repository-id': repository_id, 'project-type': repositories[repo_name]['type'],
-                 'project-name': repo_name, 'url': repositories[repo_name]['url'], 'local-path': Path(local_path).absolute(), 'download-successful': f'{download_successful}'}, ignore_index=True)
-            repository_id += 1
+                {'repository-id': repository_id, 'project-type': repositories[repository_id]['type'],
+                 'project-name': repo_name, 'url': repositories[repository_id]['url'], 'local-path': Path(local_path).absolute(),'commit': repositories[repository_id]['commit'],'download-successful': f'{download_successful}'}, ignore_index=True)
 
         manifest_df.to_csv(f"{config['repositories_path']}repo-manifest.csv", index=False)
 
@@ -59,15 +56,18 @@ class RepoDownloader(Stage):
         """Maps the contents of the csv file specified by 'input_file' in config.yaml to a json object.
         """
         repo_details = {}
+        ids = repo_data[Fields.ID]
         names = repo_data[Fields.NAME]
         urls = repo_data[Fields.URL]
         commits = repo_data[Fields.COMMIT]
         types = repo_data[Fields.TYPE]
 
         for i in range(names.count()):
-            repo_name = names[i]
-            repo_details[repo_name] = {}
-            repo_details[repo_name]['url'] = urls[i]
-            repo_details[repo_name]['commit'] = commits[i]
-            repo_details[repo_name]['type'] = types[i]
+            repo_id = ids[i]
+            repo_details[repo_id] = {}
+            repo_details[repo_id]['name'] = names[i]
+            repo_details[repo_id]['url'] = urls[i]
+            repo_details[repo_id]['commit'] = commits[i]
+            repo_details[repo_id]['type'] = types[i]
+
         return repo_details
