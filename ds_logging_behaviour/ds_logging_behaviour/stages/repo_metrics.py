@@ -42,7 +42,7 @@ class RepoMetrics(Stage):
             repo_type = repos[repository_id]['type']
 
             logging.info(
-                f" {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting Repo Metrics...{PrintColours.RESET}")
+                f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting Repo Metrics...{PrintColours.RESET}")
 
             metrics = json.loads(subprocess.check_output(
                 f"semgrep --config {config['semgrep_repo_metrics']} ../../{repo_path} --json",

@@ -42,7 +42,7 @@ class DataExtractor(Stage):
             repo_type = repos[repository_id]['type']
 
             logging.info(
-                f" {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting log levels...{PrintColours.RESET}")
+                f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting log levels...{PrintColours.RESET}")
 
             log_levels = json.loads(subprocess.check_output(
                 f"semgrep --config {config['semgrep_level_rules']} ../../{repo_path} --json",
