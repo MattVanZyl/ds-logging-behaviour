@@ -1,7 +1,7 @@
 image: ds_logging_behaviour
 version: latest
 
-repositories_path: ../repositories/ # ./output/repositories/
+repositories_path: ../repositories/
 
 input_path: ./input/
 input_file: repositories_data.csv
