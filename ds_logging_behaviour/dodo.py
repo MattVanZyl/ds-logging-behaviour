@@ -201,6 +201,7 @@ def task_download_repos():
     """Download all the repositories required inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
+    repo_path = CONFIG["volume_path"] + "../../repositories"
 
     global_config = get_surround_config()
 
@@ -225,6 +226,7 @@ def task_download_repos():
         "docker run %s" % experiment_args,
         "--volume \"%s\":/app/output" % output_path,
         "--volume \"%s\":/app/input" % data_path,
+        "--volume \"%s\":/app/../../repositories" % repo_path,
         IMAGE,
         "python3 -m ds_logging_behaviour --mode batch -a downloader %(args)s"
     ]
@@ -250,6 +252,7 @@ def task_download_repos_local():
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
+
 def task_extract_data():
     """Extracts data from the downloaded repos, run inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
