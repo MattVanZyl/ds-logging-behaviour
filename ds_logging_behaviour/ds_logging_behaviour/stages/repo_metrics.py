@@ -1,5 +1,5 @@
 from surround import Stage
-from ..print_colours import PrintColours
+from ..color import Color
 from ..functions import get_downloaded_repos
 import logging
 import subprocess
@@ -15,12 +15,12 @@ class RepoMetrics(Stage):
 
     def operate(self, state, config):
         logging.info(
-            f"\n{PrintColours.CYAN}{PrintColours.BOLD}---------------------------------\nGetting Metrics From Repositories\n---------------------------------{PrintColours.RESET}")
+            f"\n{Color.CYAN}{Color.BOLD}---------------------------------\nGetting Metrics From Repositories\n---------------------------------{Color.RESET}")
 
         repos = get_downloaded_repos(config)
 
         if len(repos) == 0:
-            logging.info(f"{PrintColours.RED}{PrintColours.BOLD}No Repositories Found{PrintColours.RESET}")
+            logging.error(f"{Color.RED}{Color.BOLD}No Repositories Found{Color.RESET}")
             return
 
         working_dir = Path().absolute()
@@ -33,7 +33,7 @@ class RepoMetrics(Stage):
 
         repo_metrics_df = pd.DataFrame(
             columns=['repository-id', 'project-type', 'project-name', 'total-file-count', 'python-file-count',
-                     'class-count', 'method-count', 'lines-of-code'])
+                     'class-count', 'method-count', 'function-count', 'lines-of-code'])
 
         # For each repo:
         for repository_id in repos.keys():
@@ -42,7 +42,7 @@ class RepoMetrics(Stage):
             repo_type = repos[repository_id]['type']
 
             logging.info(
-                f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Extracting Repo Metrics...{PrintColours.RESET}")
+                f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.YELLOW}Extracting Repo Metrics...{Color.RESET}")
 
             metrics = json.loads(subprocess.check_output(
                 f"semgrep --config {config['semgrep_repo_metrics']} ../../{repo_path} --json",
@@ -52,13 +52,16 @@ class RepoMetrics(Stage):
 
             class_count = 0
             method_count = 0
+            function_count = 0
 
             # For each log found in the semgrep search:
             for result in metrics['results']:
-                if result['check_id'] == 'class-count':
+                if result['check_id'] == 'Class_count':
                     class_count += 1
-                elif result['check_id'] == 'method-count':
+                elif result['check_id'] == 'Method_count':
                     method_count += 1
+                elif result['check_id'] == 'Function_count':
+                    function_count += 1
 
             files = GitRepository(f'../../{repo_path}').files()
 
@@ -72,8 +75,13 @@ class RepoMetrics(Stage):
             project_summary = ProjectSummary()
 
             for file in python_files:
-                source_analysis = SourceAnalysis.from_file(file, "repo")
-                project_summary.add(source_analysis)
+                # Ran into a symbolic link that broke this
+                try:
+                    source_analysis = SourceAnalysis.from_file(file, "repo")
+                    project_summary.add(source_analysis)
+                except:
+                    logging.error(
+                        f"{Color.RED}Error {Color.RESET}occurred while analysing file: {file}")
 
             lines_of_code = project_summary.total_code_count
 
@@ -81,7 +89,7 @@ class RepoMetrics(Stage):
                 {'repository-id': repository_id, 'project-type': repo_type,
                  'project-name': repo_name, 'total-file-count': total_file_count,
                  'python-file-count': python_file_count, 'class-count': class_count,
-                 'method-count': method_count, 'lines-of-code': lines_of_code},
+                 'method-count': method_count, 'function-count': function_count, 'lines-of-code': lines_of_code},
                 ignore_index=True)
 
         # Reset the working directory

@@ -1,6 +1,6 @@
 from surround import Stage
 from ..fields import Fields
-from ..print_colours import PrintColours
+from ..color import Color
 from pydriller import GitRepository, RepositoryMining
 from git.exc import GitCommandError, NoSuchPathError
 import logging
@@ -13,7 +13,7 @@ class RepoDownloader(Stage):
         repositories = self.initialise(state.input_data)
 
         logging.info(
-            f"\n{PrintColours.CYAN}{PrintColours.BOLD}------------------------\nDownloading Repositories\n------------------------{PrintColours.RESET}")
+            f"\n{Color.CYAN}{Color.BOLD}------------------------\nDownloading Repositories\n------------------------{Color.RESET}")
 
         manifest_df = pd.DataFrame(columns=['repository-id','project-type','project-name','url','commit','local-path','download-successful'])
 
@@ -26,14 +26,14 @@ class RepoDownloader(Stage):
                 # Check if repo already exists
                 GitRepository(f'{local_path}/{repo_name}')._open_repository()
                 logging.info(
-                    f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Already downloaded{PrintColours.RESET}")
+                    f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.YELLOW}Already downloaded{Color.RESET}")
                 download_successful = True
 
             except NoSuchPathError:
                 try:
                     # Otherwise, clone the repo
                     logging.info(
-                        f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.YELLOW}Cloning...{PrintColours.RESET}")
+                        f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.YELLOW}Cloning...{Color.RESET}")
                     Path(local_path).mkdir(parents=True, exist_ok=True)
                     # Clone the specified commit, if no commit is provided then clone the latest
                     RepositoryMining(repositories[repository_id]['url'],
@@ -43,7 +43,7 @@ class RepoDownloader(Stage):
 
                 except GitCommandError as err:
                     logging.info(
-                        f" {repository_id}. {PrintColours.BLUE}{repo_name}{PrintColours.RESET} - {PrintColours.RED}Download failed:{PrintColours.RESET}\n{err.stderr}")
+                        f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.RED}Download failed:{Color.RESET}\n{err.stderr}")
                     Path(local_path).rmdir()
 
             manifest_df = manifest_df.append(
@@ -53,7 +53,7 @@ class RepoDownloader(Stage):
         manifest_df.to_csv(f"{config['repositories_path']}repo-manifest.csv", index=False)
 
     def initialise(self, repo_data):
-        """Maps the contents of the csv file specified by 'input_file' in config.yaml to a json object.
+        """Maps the contents of the csv file specified by 'repo_list' in config.yaml to a json object.
         """
         repo_details = {}
         ids = repo_data[Fields.ID]

@@ -1,0 +1,181 @@
+rules:
+
+# ======================================================
+# Debug
+# ======================================================
+
+  # Function
+- id: DEBUG_function
+  patterns:
+    - pattern: $LOGGER.debug(...)
+    - pattern-not-inside: |
+       class $CLASS(...):
+         ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+  # Class
+- id: DEBUG_class
+  patterns:
+    - pattern: $LOGGER.debug(...)
+    - pattern-inside: |
+       class $CLASS(...):
+         ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+# ======================================================
+# Warning
+# ======================================================
+
+  # Function
+- id: WARNING_function
+  patterns:
+    - pattern: $LOGGER.warning(...)
+    - pattern-not-inside: |
+       class $CLASS(...):
+         ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+  # Class
+- id: WARNING_class
+  patterns:
+    - pattern: $LOGGER.warning(...)
+    - pattern-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+# ======================================================
+# Error
+# ======================================================
+
+  # Function
+- id: ERROR_function
+  patterns:
+    - pattern: $LOGGER.error(...)
+    - pattern-not-inside: |
+       class $CLASS(...):
+         ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+  # Class
+- id: ERROR_class
+  patterns:
+    - pattern: $LOGGER.error(...)
+    - pattern-inside: |
+       class $CLASS(...):
+         ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+# ======================================================
+# Critical
+# ======================================================
+
+  # Function
+- id: CRITICAL_function
+  patterns:
+    - pattern: $LOGGER.critical(...)
+    - pattern-not-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+  # Class
+- id: CRITICAL_class
+  patterns:
+    - pattern: $LOGGER.critical(...)
+    - pattern-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [python]
+  severity: WARNING
+
+# ======================================================
+# Info
+# ======================================================
+
+  # Function
+- id: INFO_function
+  patterns:
+    - pattern: $LOGGER.info(...)
+    - pattern-not-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+  # Class
+- id: INFO_class
+  patterns:
+    - pattern: $LOGGER.info(...)
+    - pattern-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+# ======================================================
+# Print
+# ======================================================
+
+  # Function
+- id: Print_function
+  patterns:
+    - pattern: print(...)
+    - pattern-not-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+  # Class
+- id: Print_class
+  patterns:
+    - pattern: print(...)
+    - pattern-inside: |
+        class $CLASS(...):
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING

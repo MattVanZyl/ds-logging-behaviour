@@ -198,7 +198,7 @@ def task_batch_local():
     }
 
 def task_download_repos():
-    """Download all the repositories required inside the container"""
+    """Download all the repositories, run inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
     repo_path = CONFIG["volume_path"] + "../../repositories"
@@ -238,7 +238,7 @@ def task_download_repos():
     }
 
 def task_download_repos_local():
-    """Download all the repositories required"""
+    """Download all the repositories"""
     cmd = [
         sys.executable,
         "-m %s" % PACKAGE_PATH,
@@ -254,9 +254,10 @@ def task_download_repos_local():
     }
 
 def task_repo_metrics():
-    """Extracts data from the downloaded repos, run inside the container"""
+    """Gets metrics from the downloaded repos, run inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
+    repo_path = CONFIG["volume_path"] + "../../repositories"
 
     global_config = get_surround_config()
 
@@ -281,6 +282,7 @@ def task_repo_metrics():
         "docker run %s" % experiment_args,
         "--volume \"%s\":/app/output" % output_path,
         "--volume \"%s\":/app/input" % data_path,
+        "--volume \"%s\":/app/../../repositories" % repo_path,
         IMAGE,
         "python3 -m ds_logging_behaviour --mode batch -a metrics %(args)s"
     ]
@@ -307,10 +309,11 @@ def task_repo_metrics_local():
         'params': PARAMS
     }
 
-def task_extract_data():
-    """Extracts data from the downloaded repos, run inside the container"""
+def task_extract_logs():
+    """Extracts logs from the downloaded repos, run inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
+    repo_path = CONFIG["volume_path"] + "../../repositories"
 
     global_config = get_surround_config()
 
@@ -335,18 +338,19 @@ def task_extract_data():
         "docker run %s" % experiment_args,
         "--volume \"%s\":/app/output" % output_path,
         "--volume \"%s\":/app/input" % data_path,
+        "--volume \"%s\":/app/../../repositories" % repo_path,
         IMAGE,
         "python3 -m ds_logging_behaviour --mode batch -a extractor %(args)s"
     ]
 
     return {
-        'basename': 'extractData',
+        'basename': 'extractLogs',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
 
-def task_extract_data_local():
-    """Extracts data from the downloaded repos"""
+def task_extract_logs_local():
+    """Extracts logs from the downloaded repos"""
     cmd = [
         sys.executable,
         "-m %s" % PACKAGE_PATH,
@@ -356,13 +360,13 @@ def task_extract_data_local():
     ]
 
     return {
-        'basename': 'extractDataLocal',
+        'basename': 'extractLogsLocal',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
 
-def task_sample_data():
-    """Sample from extracted data, run inside the container"""
+def task_sample_logs():
+    """Sample from extracted logs, run inside the container"""
     output_path = CONFIG["volume_path"] + "/output"
     data_path = CONFIG["volume_path"] + "/input"
 
@@ -394,13 +398,13 @@ def task_sample_data():
     ]
 
     return {
-        'basename': 'sampleData',
+        'basename': 'sampleLogs',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
 
-def task_sample_data_local():
-    """Sample from extracted data"""
+def task_sample_logs_local():
+    """Sample from extracted logs"""
     cmd = [
         sys.executable,
         "-m %s" % PACKAGE_PATH,
@@ -410,7 +414,7 @@ def task_sample_data_local():
     ]
 
     return {
-        'basename': 'sampleDataLocal',
+        'basename': 'sampleLogsLocal',
         'actions': [" ".join(cmd)],
         'params': PARAMS
     }
