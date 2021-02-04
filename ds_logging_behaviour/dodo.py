@@ -419,6 +419,21 @@ def task_sample_logs_local():
         'params': PARAMS
     }
 
+def task_gini_local():
+    cmd = [
+        sys.executable,
+        "-m %s" % PACKAGE_PATH,
+        "--mode batch",
+        "-a gini",
+        "%(args)s"
+    ]
+
+    return {
+        'basename': 'giniLocal',
+        'actions': [" ".join(cmd)],
+        'params': PARAMS
+    }
+
 def task_build_jupyter():
     """Build the Docker image for a Jupyter Lab notebook"""
     return {
