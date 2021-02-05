@@ -8,13 +8,6 @@ class GiniCalculator(Stage):
         logging.info(
             f"\n{Color.CYAN}{Color.BOLD}---------------------------------\nCalculating Gini Indexes\n---------------------------------{Color.RESET}")
 
-        logs_per_file = self.get_file_logs(config)
-
-
-
-        # repo_metrics_df.to_csv(f"{config['path_output']}repo-metrics.csv", index=False)
-
-    def get_file_logs(self, config):
         logs_df = pd.read_csv(f"{config['path_output']}{config['output_logs']}")
         metrics_df = pd.read_csv(f"{config['path_output']}{config['output_metrics']}")
 
@@ -34,8 +27,8 @@ class GiniCalculator(Stage):
 
             logging.info(f"REPO: {repository_id} - {repository_name}")
 
-            # =======================================
             # COUNT
+            # ---------------------
 
             # Count the number of logs in each file and put the counts in an array
             log_counts_file = []
@@ -52,27 +45,6 @@ class GiniCalculator(Stage):
             gini_index_file = self.gini(logs_per_file)
 
             logging.info(f"Gini index: {gini_index_file}")
-
-            # =======================================
-            # CLASS
-
-            # Count the number of logs in each file and put the counts in an array
-            log_counts_class = []
-            for count in repo_logs["log-scope"].value_counts():
-                log_counts_class.append(count)
-                logging.info(f"TYPE COUNT: {count}")
-
-            # # Create an array of log counts per file in the repo and initialise each to 0
-            # logs_per_file = [0] * count_file
-            #
-            # # Replace elements at the start with the counts saved earlier
-            # logs_per_file[0:len(log_counts_file) - 1] = log_counts_file
-            #
-            # logging.info(f"Logs per file: {logs_per_file}")
-            # gini_index_file = self.gini(logs_per_file)
-            #
-            # logging.info(f"Gini index: {gini_index_file}")
-
 
             # Save Gini Indexes
             gini_df = gini_df.append(
