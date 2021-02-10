@@ -6,7 +6,7 @@ Runners and assemblies are defined in here.
 import os
 import argparse
 from surround import Surround, Assembler, has_config
-from .stages import RepoDownloader, RepoMetrics, DataExtractor, DataSampler
+from .stages import RepoDownloader, RepoMetrics, LogExtractor, LogSampler
 from .file_system_runner import FileSystemRunner
 
 RUNNERS = [
@@ -19,9 +19,9 @@ ASSEMBLIES = [
     Assembler("metrics")
         .set_stages([RepoMetrics()]),
     Assembler("extractor")
-        .set_stages([DataExtractor()]),
+        .set_stages([LogExtractor()]),
     Assembler("sampler")
-        .set_stages([DataSampler()])
+        .set_stages([LogSampler()])
 ]
 
 @has_config

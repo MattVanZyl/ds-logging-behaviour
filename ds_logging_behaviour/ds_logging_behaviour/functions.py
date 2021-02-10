@@ -10,7 +10,7 @@ def get_downloaded_repos(config):
     # Each of the repos are downloaded into a path that fits the structure:
     # repositories/{repo_type}/{repo_id}/{repo_name}
     # From this path we can extract the required repo details and store them in a json object
-    repo_paths = iglob(f"{config['repositories_path']}*/*/*")
+    repo_paths = iglob(f"{config['path_repositories']}*/*/*")
 
     for repo_path in repo_paths:
         repo_id = repo_path.split("/")[-2]

@@ -29,7 +29,7 @@ class RepoMetrics(Stage):
 
         # NOTE: The 'check_id' values in the semgrep results will be prepended with 'input.semgrep', which matches the semgrep file locations relative to the working directory.
         # To remove the prepended 'input.semgrep' we change the working directory to the semgrep file location.
-        os.chdir(f"{config['semgrep_path']}")
+        os.chdir(f"{config['path_semgrep']}")
 
         repo_metrics_df = pd.DataFrame(
             columns=['repository-id', 'project-type', 'project-name', 'total-file-count', 'python-file-count',
@@ -45,7 +45,7 @@ class RepoMetrics(Stage):
                 f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.YELLOW}Extracting Repo Metrics...{Color.RESET}")
 
             metrics = json.loads(subprocess.check_output(
-                f"semgrep --config {config['semgrep_repo_metrics']} ../../{repo_path} --json",
+                f"semgrep --config {config['input_semgrep_repo_metrics']} ../../{repo_path} --json",
                 shell=True))
 
             repo_metrics[repository_id] = {}
@@ -95,4 +95,4 @@ class RepoMetrics(Stage):
         # Reset the working directory
         os.chdir(f"{working_dir}")
 
-        repo_metrics_df.to_csv(f"{config['output_path']}repo-metrics.csv", index=False)
+        repo_metrics_df.to_csv(f"{config['path_output']}{config['output_metrics']}", index=False)

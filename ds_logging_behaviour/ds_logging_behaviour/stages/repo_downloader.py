@@ -19,7 +19,7 @@ class RepoDownloader(Stage):
 
         for repository_id in repositories.keys():
             repo_name = repositories[repository_id]['name']
-            local_path = f"{config['repositories_path']}{repositories[repository_id]['type']}/{repository_id}"
+            local_path = f"{config['path_repositories']}{repositories[repository_id]['type']}/{repository_id}"
 
             download_successful = False
             try:
@@ -50,10 +50,10 @@ class RepoDownloader(Stage):
                 {'repository-id': repository_id, 'project-type': repositories[repository_id]['type'],
                  'project-name': repo_name, 'url': repositories[repository_id]['url'], 'local-path': Path(local_path).absolute(),'commit': repositories[repository_id]['commit'],'download-successful': f'{download_successful}'}, ignore_index=True)
 
-        manifest_df.to_csv(f"{config['repositories_path']}repo-manifest.csv", index=False)
+        manifest_df.to_csv(f"{config['path_repositories']}{config['output_manifest']}", index=False)
 
     def initialise(self, repo_data):
-        """Maps the contents of the csv file specified by 'repo_list' in config.yaml to a json object.
+        """Maps the contents of the csv file specified by 'input_repo_list' in config.yaml to a json object.
         """
         repo_details = {}
         ids = repo_data[Fields.ID]

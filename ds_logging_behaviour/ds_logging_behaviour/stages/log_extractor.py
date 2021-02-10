@@ -9,7 +9,7 @@ import json
 import os
 
 
-class DataExtractor(Stage):
+class LogExtractor(Stage):
 
     def operate(self, state, config):
         logging.info(
@@ -27,7 +27,7 @@ class DataExtractor(Stage):
 
         # NOTE: The 'check_id' values in the semgrep results will be prepended with 'input.semgrep', which matches the semgrep file locations relative to the working directory.
         # To remove the prepended 'input.semgrep' we change the working directory to the semgrep file location.
-        os.chdir(f"{config['semgrep_path']}")
+        os.chdir(f"{config['path_semgrep']}")
 
         log_levels_df = pd.DataFrame(
             columns=['log-id', 'repository-id', 'project-type', 'project-name', 'file-name', 'line-number', 'log-level',
@@ -45,7 +45,7 @@ class DataExtractor(Stage):
                 f" {Color.BLUE}{repository_id}. {repo_name}{Color.RESET} - {Color.YELLOW}Extracting logs...{Color.RESET}")
 
             log_levels = json.loads(subprocess.check_output(
-                f"semgrep --config {config['semgrep_log_levels']} ../../{repo_path} --json",
+                f"semgrep --config {config['input_semgrep_log_levels']} ../../{repo_path} --json",
                 shell=True))
 
             repo_logs[repository_id] = []
@@ -82,4 +82,4 @@ class DataExtractor(Stage):
         # Reset the working directory
         os.chdir(f"{working_dir}")
 
-        log_levels_df.to_csv(f"{config['output_path']}log-levels.csv", index=False)
+        log_levels_df.to_csv(f"{config['path_output']}{config['output_logs']}", index=False)

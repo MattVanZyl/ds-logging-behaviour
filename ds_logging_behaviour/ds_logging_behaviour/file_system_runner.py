@@ -12,6 +12,6 @@ logging.basicConfig(level=logging.INFO)
 class FileSystemRunner(Runner):
 
     def load_data(self, mode, config):
-        df = pd.read_csv(f"{config['input_path']}{config['repo_list']}")
+        df = pd.read_csv(f"{config['path_input']}{config['input_repo_list']}")
         state = AssemblerState(df)
         return state
