@@ -31,13 +31,13 @@ A `output/repo-metrics.csv` file will be outputted after the metrics extraction 
 To extract log data from the repos after they have been downloaded:
 `surround run extractLogs`
 
-A `output/log-level.csv` file will be outputted after the log extraction is completed.
+A `output/repo-logs.csv` file will be outputted after the log extraction is completed.
 
 ### Sample Logs
 Once the logs have been extracted from the repos, a sample of a given size specified in the `config.yaml` file can be taken.
 `surround run sampleLogs`
 
-A `output/log-sample.csv` file will be outputted with the sample.
+A `output/repo-logs-sample.csv` file will be outputted with the sample.
 
 ## Additional Information
 ### Config
