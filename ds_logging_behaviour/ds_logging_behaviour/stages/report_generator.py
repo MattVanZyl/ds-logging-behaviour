@@ -23,5 +23,5 @@ class ReportGenerator(surround.Stage):
             global_config=self.global_config,
             surround_version=surround.__version__)
 
-        with open(os.path.join(config["output_path"], "results.html"), "wb+") as out:
+        with open(os.path.join(config["path_output"], "results.html"), "wb+") as out:
             out.write(results_page)

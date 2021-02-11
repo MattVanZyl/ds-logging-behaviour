@@ -1,0 +1,11 @@
+id,name,url,commit,type
+0,BEGAN,https://github.com/artcg/BEGAN,39d5f745d52f146c0bbdf6eed68f30ed274bb6f4,ds
+1,bat-country,https://github.com/jrosebr1/bat-country,894af13bd777ab8aa989baf520db074b97cfad9a,ds
+2,chatbot-rnn,https://github.com/pender/chatbot-rnn,82cbb710beaf15da11b60e03f00bdbfd521df754,ds
+3,poeai,https://github.com/nicholastoddsmith/poeai,e95add37348f402b7e42f0e978b6af466dc0b055,ds
+4,open-solution-data-science-bowl-2018,https://github.com/minerva-ml/open-solution-data-science-bowl-2018,5874c22600c2cb5b731fe9bce7d3f72a2ed11e5e,ds
+5,neural-network-genetic-algorithm,https://github.com/harvitronix/neural-network-genetic-algorithm,66ce11abbf5b3d9bac0d39723db8eb1ae856373f,ds
+6,shutit,https://github.com/ianmiell/shutit,509e273584408f01d216b5cc80058c03fe6654f4,non-ds
+7,arctic,https://github.com/man-group/arctic,e27fbace24dd5de043e03cdacb7e70bdf7fd7b42,non-ds
+8,gtg,https://github.com/getting-things-gnome/gtg,4a0b81804955cc81781fa5b1f32b920d8d6e6de6,non-ds
+9,janome,https://github.com/mocobeta/janome,9f3b3c054ea889842a6d955981cab752be8d96e8,non-ds

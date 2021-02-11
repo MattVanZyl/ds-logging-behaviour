@@ -1,4 +1,4 @@
-from pathlib import Path
+from glob import iglob
 
 
 def get_downloaded_repos(config):
@@ -6,20 +6,16 @@ def get_downloaded_repos(config):
     Returns a json object that has each repo_id mapped to it's corresponding name, type and local path.
     """
     repos = {}
-    local_path = f"{config['repositories_path']}"
 
-    if Path(local_path).exists():
-        for type_folder in Path(local_path).iterdir():
-            if type_folder.is_dir():
-                repo_type = type_folder.name
-                for id_folder in type_folder.iterdir():
-                    if id_folder.is_dir():
-                        repo_id = id_folder.name
-                        for name_folder in id_folder.iterdir():
-                            repo_name = name_folder.name
-                            repos[repo_id] = {}
-                            repos[repo_id]['name'] = repo_name
-                            repos[repo_id]['type'] = repo_type
-                            repos[repo_id]['path'] = f'{local_path}{repo_type}/{repo_id}/{repo_name}'
-                            break
+    # Each of the repos are downloaded into a path that fits the structure:
+    # repositories/{repo_type}/{repo_id}/{repo_name}
+    # From this path we can extract the required repo details and store them in a json object
+    repo_paths = iglob(f"{config['path_repositories']}*/*/*")
+
+    for repo_path in repo_paths:
+        repo_id = repo_path.split("/")[-2]
+        repos[repo_id] = {}
+        repos[repo_id]['name'] = repo_path.split("/")[-1]
+        repos[repo_id]['type'] = repo_path.split("/")[-3]
+        repos[repo_id]['path'] = repo_path
     return repos

@@ -1,7 +1,9 @@
 rules:
-- id: class-count
+
+  # Class
+- id: Class_count
   pattern: |
-    class $CLASS(...):
+    class $C:
       ...
   message: |
     Match found
@@ -9,21 +11,32 @@ rules:
   languages: [ python ]
   severity: WARNING
 
-- id: method-count
-  pattern: |
-    def $METHOD(...):
-      ...
-  message: |
-    Match found
-  fix: |
-  languages: [ python ]
-  severity: WARNING
-
-- id: lines-of-code
+  # Method
+- id: Method_count
   patterns:
-    - pattern-regex: '(.*)$'
+    - pattern: |
+        def $M(...):
+          ...
+    - pattern-inside: |
+        class $C:
+          ...
   message: |
     Match found
   fix: |
-  languages: [python]
+  languages: [ python ]
+  severity: WARNING
+
+  # Function
+- id: Function_count
+  patterns:
+    - pattern: |
+        def $F(...):
+          ...
+    - pattern-not-inside: |
+        class $C:
+          ...
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
   severity: WARNING
