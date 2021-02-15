@@ -10,6 +10,8 @@ class Visualization(Stage):
             f"\n{Color.CYAN}{Color.BOLD}---------------------------------\nVisualization\n---------------------------------{Color.RESET}")
 
         df = pd.read_csv(f"{config['path_output']}{config['output_gini_indexes']}")
-        sns_plot = sns.relplot(data=df, x="repository-id", y="gini-index-file", hue="repository-type")
+        plot_density = sns.displot(data=df, x="gini-index-repo", hue="repository-type", kind="kde", fill=True, cut=0)
+        plot_density.savefig(f"{config['path_output']}plot_density.png")
 
-        sns_plot.savefig(f"{config['path_output']}output.png")
+        plot_histo = sns.displot(data=df, x="gini-index-repo", hue="repository-type", multiple="dodge")
+        plot_histo.savefig(f"{config['path_output']}plot_histogram.png")

@@ -1,7 +1,7 @@
 rules:
 
   # Class
-- id: Class_count
+- id: Class
   pattern: |
     class $C:
       ...
@@ -12,7 +12,7 @@ rules:
   severity: WARNING
 
   # Method
-- id: Method_count
+- id: Method
   patterns:
     - pattern: |
         def $M(...):
@@ -27,7 +27,7 @@ rules:
   severity: WARNING
 
   # Function
-- id: Function_count
+- id: Function
   patterns:
     - pattern: |
         def $F(...):

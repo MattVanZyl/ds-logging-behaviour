@@ -11,7 +11,7 @@ path_repositories: ../repositories/
 path_semgrep: ./input/semgrep/
 
 # Input Files
-input_repo_list: repositories_data_test.csv
+input_repo_list: repositories_data.csv
 input_semgrep_repo_metrics: repo_metrics.yaml
 input_semgrep_log_levels: log_levels.yaml
 

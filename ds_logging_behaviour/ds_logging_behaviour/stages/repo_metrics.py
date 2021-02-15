@@ -56,11 +56,11 @@ class RepoMetrics(Stage):
 
             # For each log found in the semgrep search:
             for result in metrics['results']:
-                if result['check_id'] == 'Class_count':
+                if result['check_id'] == 'Class':
                     class_count += 1
-                elif result['check_id'] == 'Method_count':
+                elif result['check_id'] == 'Method':
                     method_count += 1
-                elif result['check_id'] == 'Function_count':
+                elif result['check_id'] == 'Function':
                     function_count += 1
 
             files = GitRepository(f'../../{repo_path}').files()

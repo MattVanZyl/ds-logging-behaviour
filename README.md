@@ -8,6 +8,14 @@ Install Surround:
 `pip install surround==0.1.0`
 `pip install surround_cli==0.0.3`
 
+Ensure that you increase the memory allocation in Docker.
+
+Tested with resources allocated:
+- CPU: 6
+- Memory: 6.00 GB
+- Swap: 1 GB
+- Disk Image Size: 24 GB
+
 ## Running In A Container
 In a terminal, navigate to `ds-logging-behaviour/ds_logging_behaviour`
 
