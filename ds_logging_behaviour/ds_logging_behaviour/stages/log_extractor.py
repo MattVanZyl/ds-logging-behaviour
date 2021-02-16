@@ -223,7 +223,7 @@ class LogExtractor(Stage):
                     ignore_index=True)
 
             logging.info(
-                f" {Color.YELLOW}Extracting repo metrics...{Color.RESET}")
+                f" {Color.YELLOW}Extracting Repo Metrics...{Color.RESET}")
             self.repo_metrics(repository_id, repository_name, repository_path, repository_type)
 
         # Reset the working directory
