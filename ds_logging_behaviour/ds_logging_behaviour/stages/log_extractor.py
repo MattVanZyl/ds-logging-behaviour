@@ -10,131 +10,98 @@ import os
 from pydriller import GitRepository
 from pygount import SourceAnalysis, ProjectSummary
 
-# repo_components json structure:
-#
-# repository_id {
-#     file_path {
-#         functions[
+# all_repository_data json structure:
+
+# {
+#   "repository_id" : {
+#     "repository_name" : "name",
+#     "repository_type" : "ds",
+#     "total_file_count" : 23,
+#     "python_modules" : {
+#       "file_path" : {
+#         "lines" : [
+#           "some line",
+#           "another line",
+#           "yet another line"
+#           ],
+#         "functions" : [
 #             {
-#                 content :
-#                 start_line :
-#                 end_line :
+#             "start_line" : 4,
+#             "end_line" : 7
 #             },
 #             {
-#                 content :
-#                 start_line :
-#                 end_line :
+#             "start_line" : 8,
+#             "end_line" : 11
 #             }
-#         ]
-#         classes[
+#         ],
+#         "classes" : [
 #             {
-#                 content :
-#                 start_line :
-#                 end_line :
+#             "start_line" : 2,
+#             "end_line" : 5
 #             }
-#         ]
-#         methods[
+#         ],
+#         "methods" : [
 #             {
-#                 content :
-#                 start_line :
-#                 end_line :
+#             "start_line" : 2,
+#             "end_line" : 5
 #             }
 #         ]
-#     }
+#       }
+#     },
+#     "lines_of_code" : 500
+#   }
 # }
 
-class LogExtractor(Stage):
 
-    repo_components = {}
+class LogExtractor(Stage):
+    all_repository_data = {}
 
     repository_logs_df = pd.DataFrame(
-        columns=['log-id', 'repository-id', 'repository-type', 'repository-name', 'relative-file-path', 'line-number', 'log-level',
+        columns=['log-id', 'repository-id', 'repository-type', 'repository-name', 'relative-file-path', 'line-number',
+                 'log-level',
                  'log-statement', 'log-scope', 'log-scope-id', 'log-scope-lines', 'log-scope-content'])
 
     repository_metrics_df = pd.DataFrame(
-        columns=['repository-id', 'repository-type', 'repository-name', 'file-count', 'module-count',
+        columns=['repository-id', 'repository-type', 'repository-name', 'total-file-count', 'module-count',
                  'class-count', 'method-count', 'function-count', 'lines-of-code'])
 
-    def append_repo_components(self, config, repository_id, repo_path):
-        components = json.loads(subprocess.check_output(
-            f"semgrep --config {config['input_semgrep_repo_metrics']} ../../{repo_path} --json",
-            shell=True))
 
-        self.repo_components[repository_id] = {}
-
-        for result in components['results']:
-            file_path = result['path']
-
-            # If the file has not yet been encountered, add it
-            if file_path not in self.repo_components[repository_id]:
-                self.repo_components[repository_id][file_path] = {}
-                self.repo_components[repository_id][file_path]['functions'] = []
-                self.repo_components[repository_id][file_path]['classes'] = []
-                self.repo_components[repository_id][file_path]['methods'] = []
-
-            component = {}
-            content = result['extra']['lines'].strip()
-            content = content[:32000] + (content[32000:] and '...')
-            component['content'] = content
-            component['start_line'] = result['start']['line']
-            component['end_line'] = result['end']['line']
-
-            if result['check_id'] == 'Method':
-                self.repo_components[repository_id][file_path]['methods'].append(component)
-            elif result['check_id'] == 'Class':
-                self.repo_components[repository_id][file_path]['classes'].append(component)
-            elif result['check_id'] == 'Function':
-                self.repo_components[repository_id][file_path]['functions'].append(component)
-
-    def get_log_scope(self, repository_id, log_file_path, log_line):
-
-        # 'log_scope', 'log_scope_id', 'log_scope_content', 'log_scope_lines'
-
-        # Module
-        # If the file has not yet been encountered, it means that no functions, classes or methods
-        # were found in the file and thus the log must be at the module level.
-        if log_file_path not in self.repo_components[repository_id]:
-            return 'module', 0, "", ""
-
-        # Method
-        for index, method in enumerate(self.repo_components[repository_id][log_file_path]['methods']):
-            if log_line >= method['start_line'] and log_line <= method['end_line']:
-                return 'method', index, method['content'], f"{method['start_line']} - {method['end_line']}"
-
-        # Class
-        for index, class_ in enumerate(self.repo_components[repository_id][log_file_path]['classes']):
-            if log_line >= class_['start_line'] and log_line <= class_['end_line']:
-                return 'class', index, class_['content'], f"{class_['start_line']} - {class_['end_line']}"
-
-        # Function
-        for index, function in enumerate(self.repo_components[repository_id][log_file_path]['functions']):
-            if log_line >= function['start_line'] and log_line <= function['end_line']:
-                return 'function', index, function['content'], f"{function['start_line']} - {function['end_line']}"
-
-        # If the file has been encountered but no component match was found
-        return 'module', 0, "", ""
-
-    def repo_metrics(self, repository_id, repository_name, repository_path, repository_type):
+    def load_repo_files(self, config, repository_id, repository_name, repository_type, repository_path):
+        repository_data = {}
 
         files = GitRepository(f'../../{repository_path}').files()
 
-        # Total file count
-        file_count = len(files)
+        repository_data["repository_name"] = repository_name
+        repository_data["repository_type"] = repository_type
+        repository_data["total_file_count"] = len(files)
 
-        # Components counts (Module, Function, Class, Method)
+        # Get all of the python files with a .py extension
         python_files = [f for f in files if f.split(".")[-1] == "py"]
-        module_count = len(python_files)
-        function_count = 0
-        class_count = 0
-        method_count = 0
-        for file, value in self.repo_components[repository_id].items():
-            function_count += len(value['functions'])
-            class_count += len(value['classes'])
-            method_count += len(value['methods'])
 
-        # Lines of code
+        repository_data["python_modules"] = {}
         project_summary = ProjectSummary()
+
+        # Store the code of each module
         for file in python_files:
+
+            # Get the path of the current file relative to its repo
+            relative_path = file.replace(f"{Path(f'../../{repository_path}').absolute().resolve()}/", "")
+
+            repository_data["python_modules"][relative_path] = {}
+
+            # Save each line of code into the array "lines". Each "python_modules" key will have its own "lines" array
+            lines = []
+            f = open(file, "r")
+            for x in f:
+                lines.append(x.rstrip())
+            f.close()
+            repository_data["python_modules"][relative_path]["lines"] = lines
+
+            repository_data["python_modules"][relative_path]['functions'] = []
+            repository_data["python_modules"][relative_path]['classes'] = []
+            repository_data["python_modules"][relative_path]['methods'] = []
+
+            # Lines of code count
             try:
                 source_analysis = SourceAnalysis.from_file(file, "repo")
                 project_summary.add(source_analysis)
@@ -142,13 +109,99 @@ class LogExtractor(Stage):
                 # Ran into a symbolic link that broke this
                 logging.error(
                     f"{Color.RED}Error {Color.RESET}occurred while analysing file: {file}")
-        lines_of_code = project_summary.total_code_count
+
+        repository_data["lines_of_code"] = project_summary.total_code_count
+
+        # Get all of the classes, methods and functions inside of this module
+        # These are found using the semgrep patterns defined in "repo_metrics.yaml"
+        components = json.loads(subprocess.check_output(
+            f"semgrep --config {config['input_semgrep_repo_metrics']} ../../{repository_path} --json",
+            shell=True))
+
+        for result in components['results']:
+            # Get the path of the current file relative to its repo
+            file_path = result['path'].split('/', 7)[7]
+            # Get the start and end lines of the current class/method/function (referred to here as component)
+            component = {'start_line': result['start']['line'], 'end_line': result['end']['line']}
+
+            if result['check_id'] == 'Method':
+                repository_data["python_modules"][file_path]['methods'].append(component)
+            elif result['check_id'] == 'Class':
+                repository_data["python_modules"][file_path]['classes'].append(component)
+            elif result['check_id'] == 'Function':
+                repository_data["python_modules"][file_path]['functions'].append(component)
+
+        # Save all of the repo details inside of the "all_repository_data" object, accessible in the other methods
+        self.all_repository_data[repository_id] = repository_data
+
+    def get_log_scope(self, config, repository_id, log_file_path, log_line_start, log_line_end):
+        """
+        Determines the scope details of a log, given the starting and ending line numbers of the log.
+
+        Returns:
+            - log_scope: module/function/class/method
+            - log_scope_id: The index of the scope e.g. the 3rd function in this module
+            - log_scope_content: The log and the surrounding code to provide context
+            - log_scope_lines: The line numbers of the scope
+        """
+        def return_lines(module_lines, start_line, end_line, min_line, max_line):
+            # Clamp The lines to grab surrounding code from
+            # Try to grab
+            lines_from = max(min(start_line - config['log_context_lines_before'], max_line), min_line) - 1
+            lines_to = max(min(end_line + config['log_context_lines_after'], max_line), min_line)
+
+            return "\n".join(module_lines[lines_from:lines_to])
+
+        lines = self.all_repository_data[repository_id]["python_modules"][log_file_path]["lines"]
+
+        # Method
+        for index, method in enumerate(self.all_repository_data[repository_id]["python_modules"][log_file_path]['methods']):
+            if log_line_start >= method['start_line'] and log_line_end <= method['end_line']:
+                content = return_lines(lines, log_line_start, log_line_end, method['start_line'],
+                                       method['end_line'])
+                return 'method', index, content, f"{method['start_line']} - {method['end_line']}"
+
+        # Class
+        for index, class_ in enumerate(self.all_repository_data[repository_id]["python_modules"][log_file_path]['classes']):
+            if log_line_start >= class_['start_line'] and log_line_end <= class_['end_line']:
+                content = return_lines(lines, log_line_start, log_line_end, class_['start_line'], class_['end_line'])
+                return 'class', index, content, f"{class_['start_line']} - {class_['end_line']}"
+
+        # Function
+        for index, function in enumerate(self.all_repository_data[repository_id]["python_modules"][log_file_path]['functions']):
+            if log_line_start >= function['start_line'] and log_line_end <= function['end_line']:
+                content = return_lines(lines, log_line_start, log_line_end, function['start_line'],
+                                       function['end_line'])
+                return 'function', index, content, f"{function['start_line']} - {function['end_line']}"
+
+        # If the file has been encountered but no component match was found
+
+        module = self.all_repository_data[repository_id]["python_modules"][log_file_path]
+        length = len(module['lines'])
+        content = return_lines(lines, log_line_start, log_line_end, 1, length)
+        return 'module', 0, content, f"1 - {length}"
+
+    def repo_metrics(self, repository_id):
+        repository_name = self.all_repository_data[repository_id]["repository_name"]
+        repository_type = self.all_repository_data[repository_id]["repository_type"]
+
+        module_count = len(self.all_repository_data[repository_id]["python_modules"])
+        function_count = 0
+        class_count = 0
+        method_count = 0
+        for file, value in self.all_repository_data[repository_id]["python_modules"].items():
+            function_count += len(value['functions'])
+            class_count += len(value['classes'])
+            method_count += len(value['methods'])
+
+        total_file_count = self.all_repository_data[repository_id]["total_file_count"]
+        lines_of_code = self.all_repository_data[repository_id]["lines_of_code"]
 
         self.repository_metrics_df = self.repository_metrics_df.append(
             {'repository-id': repository_id,
              'repository-type': repository_type,
              'repository-name': repository_name,
-             'file-count': file_count,
+             'total-file-count': total_file_count,
              'module-count': module_count,
              'class-count': class_count,
              'method-count': method_count,
@@ -180,16 +233,20 @@ class LogExtractor(Stage):
             repository_type = repos[repository_id]['type']
 
             logging.info(
-                f" {Color.BLUE}- {repository_id}. {repository_name} -{Color.RESET}")
+                f" {Color.BLUE}{repository_id}. {repository_name}{Color.RESET}")
 
             logging.info(
-                f" {Color.YELLOW}Finding Repo Functions, Classes and Methods...{Color.RESET}")
+                f" {Color.YELLOW}Extracting Repo Details...{Color.RESET}")
+            
+            self.load_repo_files(config, repository_id, repository_name, repository_type, repository_path)
 
-            self.append_repo_components(config, repository_id, repository_path)
+            self.repo_metrics(repository_id)
 
             logging.info(
                 f" {Color.YELLOW}Extracting Logs...{Color.RESET}")
 
+            # Get all of the logs in the repo
+            # These are found using the semgrep patterns defined in "log_levels.yaml"
             log_levels = json.loads(subprocess.check_output(
                 f"semgrep --config {config['input_semgrep_log_levels']} ../../{repository_path} --json",
                 shell=True))
@@ -197,22 +254,28 @@ class LogExtractor(Stage):
             # For each log found in the semgrep search:
             for result in log_levels['results']:
                 log_id += 1
-                log_file_path = result['path']
-                log_line = result['start']['line']
+                log_file_path = result['path'].split('/', 7)[7]
+                log_line_start = result['start']['line']
+                log_line_end = result['end']['line']
 
                 # Do not assign any log level for print statements
                 log_level = result['check_id']
                 log_level = log_level if log_level != "Print" else ""
 
-                log_scope, log_scope_id, log_scope_content, log_scope_lines = self.get_log_scope(repository_id, log_file_path, log_line)
+                # Get the log scope details and surrounding code
+                log_scope, log_scope_id, log_scope_content, log_scope_lines = self.get_log_scope(config,
+                                                                                                 repository_id,
+                                                                                                 log_file_path,
+                                                                                                 log_line_start,
+                                                                                                 log_line_end)
 
                 self.repository_logs_df = self.repository_logs_df.append(
                     {'log-id': log_id,
                      'repository-id': repository_id,
                      'repository-type': repository_type,
                      'repository-name': repository_name,
-                     'relative-file-path': log_file_path.split('/',7)[7],
-                     'line-number': log_line,
+                     'relative-file-path': log_file_path,
+                     'line-number': log_line_start,
                      'log-level': log_level,
                      'log-statement': result['extra']['lines'].strip(),
                      'log-scope': log_scope,
@@ -221,10 +284,6 @@ class LogExtractor(Stage):
                      'log-scope-content': log_scope_content
                      },
                     ignore_index=True)
-
-            logging.info(
-                f" {Color.YELLOW}Extracting Repo Metrics...{Color.RESET}")
-            self.repo_metrics(repository_id, repository_name, repository_path, repository_type)
 
         # Reset the working directory
         os.chdir(f"{working_dir}")
