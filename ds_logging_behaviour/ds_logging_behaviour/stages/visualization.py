@@ -1,8 +1,11 @@
-import seaborn as sns
 from surround import Stage
 from ..color import Color
 import logging
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 class Visualization(Stage):
     def operate(self, state, config):
@@ -10,22 +13,47 @@ class Visualization(Stage):
             f"\n{Color.CYAN}{Color.BOLD}---------------------------------\nVisualization\n---------------------------------{Color.RESET}")
 
         df = pd.read_csv(f"{config['path_output']}{config['output_gini_indexes']}")
-        #FILE
-        plot_density = sns.displot(data=df, x="gini-index-file", hue="repository-type", kind="kde", fill=True, cut=0)
-        plot_density.savefig(f"{config['path_output']}plot_density_file.png")
 
-        plot_histo = sns.displot(data=df, x="gini-index-file", hue="repository-type", multiple="dodge").set_title('Logs per file')
-        plot_histo.savefig(f"{config['path_output']}plot_histogram_file.png")
+        fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+        fig.suptitle('Logs Per File')
 
-        plot_histo = sns.displot(data=df, x="gini-index-module", hue="repository-type", multiple="dodge").set_title('Logs per module (outside of classes, functions and methods)')
-        plot_histo.savefig(f"{config['path_output']}plot_histogram_module.png")
+        sns.histplot(data=df, x="gini-index-file", hue="repository-type", multiple="dodge", ax=axes[0])
+        axes[0].set(xticks=np.arange(0, 1, 0.1))
 
-        plot_histo = sns.displot(data=df, x="gini-index-function", hue="repository-type", multiple="dodge").set_title('Logs per function')
-        plot_histo.savefig(f"{config['path_output']}plot_histogram_function.png")
+        sns.kdeplot(data=df, x="gini-index-file", hue="repository-type", fill=True, cut=0, ax=axes[1])
+        axes[1].set(xticks=np.arange(0, 1, 0.1))
 
-        plot_histo = sns.displot(data=df, x="gini-index-class", hue="repository-type", multiple="dodge").set_title('Logs per class (outside of methods)')
-        plot_histo.savefig(f"{config['path_output']}plot_histogram_class.png")
+        fig.savefig(f"{config['path_output']}plot_gini_repos.png")
 
-        plot_histo = sns.displot(data=df, x="gini-index-method", hue="repository-type", multiple="dodge").set_title('Logs per method')
-        plot_histo.savefig(f"{config['path_output']}plot_histogram_method.png")
+        fig, axes = plt.subplots(2, 4, figsize=(30, 10))
+        fig.suptitle('Logs Per Scope')
 
+        for ax in axes.flat:
+            ax.set(xticks=np.arange(0, 1, 0.1))
+
+        sns.histplot(data=df, x="gini-index-module", hue="repository-type", multiple="dodge", ax=axes[0, 0])
+        sns.kdeplot(data=df, x="gini-index-module", hue="repository-type", fill=True, ax=axes[1, 0], cut=0)
+        axes[0, 0].set_title("Module (outside of classes, functions and methods)")
+        axes[0, 0].set(title="Module (outside of classes, functions and methods)",
+                       xticks=np.arange(0, 1, 0.1),
+                       ylim=(0, 500))
+
+        sns.histplot(data=df, x="gini-index-function", hue="repository-type", multiple="dodge", ax=axes[0, 1])
+        sns.kdeplot(data=df, x="gini-index-function", hue="repository-type", fill=True, ax=axes[1, 1], cut=0)
+        axes[0, 1].set(title="Function",
+                       xticks=np.arange(0, 1, 0.1),
+                       ylim=(0, 500))
+
+        sns.histplot(data=df, x="gini-index-class", hue="repository-type", multiple="dodge", ax=axes[0, 2])
+        sns.kdeplot(data=df, x="gini-index-class", hue="repository-type", fill=True, ax=axes[1, 2], cut=0)
+        axes[0, 2].set(title="Class (outside of methods)",
+                       xticks=np.arange(0, 1, 0.1),
+                       ylim=(0, 500))
+
+        sns.histplot(data=df, x="gini-index-method", hue="repository-type", multiple="dodge", ax=axes[0, 3])
+        sns.kdeplot(data=df, x="gini-index-method", hue="repository-type", fill=True, ax=axes[1, 3], cut=0)
+        axes[0, 3].set(title="Method",
+                       xticks=np.arange(0, 1, 0.1),
+                       ylim=(0, 500))
+
+        fig.savefig(f"{config['path_output']}plot_gini_scopes.png")

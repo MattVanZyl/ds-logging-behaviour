@@ -22,36 +22,6 @@ class GiniCalculator(Stage):
         fair_area = height * len(list_of_values) / 2.
         return (fair_area - area) / fair_area
 
-    # def calculateRepoGini(self, logs_df, repository_id, count_module):
-    #     gini_index_repo = 0
-    #
-    #     repo_logs = logs_df.loc[logs_df["repository-id"] == repository_id]
-    #     # Count the number of logs in each file and put the counts in an array
-    #     logs_counts = []
-    #
-    #     did_find_logs_for_repo = not repo_logs.empty
-    #
-    #     if did_find_logs_for_repo:
-    #
-    #         for count in repo_logs["relative-file-path"].value_counts():
-    #             logs_counts.append(count)
-    #
-    #         # Create an array of log counts per file in the repo and initialise each to 0
-    #         total_logs_per_file = [0] * count_module
-    #
-    #         # logging.info(f"Logs per file BEFORE: {total_logs_per_file}")
-    #         # logging.info(f"logs_counts: {logs_counts}")
-    #
-    #         # Replace elements at the start with the counts saved earlier
-    #         if len(logs_counts) > 0:
-    #             total_logs_per_file[0:len(logs_counts)] = logs_counts
-    #
-    #             # logging.info(f"Logs per file AFTER: {total_logs_per_file}")
-    #
-    #             gini_index_repo = self.gini(total_logs_per_file)
-    #
-    #     return gini_index_repo
-
     def calculateScopeGini(self, logs_df, repository_id, scope: ScopeType, count_scope, ):
 
         def get_scope_columns():
@@ -70,10 +40,8 @@ class GiniCalculator(Stage):
         logging.info(f" - {scope.name} - ")
         logging.info(f"{scope.name} Count: {count_scope}")
 
-
         gini_index_scope = 0
 
-        # repo_logs = logs_df.loc[(logs_df["repository-id"] == repository_id) & (logs_df["log-scope"] == scope)]
         repo_logs = get_scope_columns()
 
         logs_counts = []
@@ -124,10 +92,6 @@ class GiniCalculator(Stage):
             count_class = row["class-count"]
             count_method = row["method-count"]
 
-
-            # Get all the logs of the current repo
-            # repo_logs = logs_df.loc[logs_df['repository-id'] == repository_id]
-
             logging.info(f"\n\nREPO: {repository_id} - {repository_name}")
 
             gini_index_file = self.calculateScopeGini(logs_df, repository_id, ScopeType.FILE, count_module)
@@ -140,32 +104,6 @@ class GiniCalculator(Stage):
             logging.info(f"gini_index_class: {gini_index_class}")
             gini_index_method = self.calculateScopeGini(logs_df, repository_id, ScopeType.METHOD, count_method)
             logging.info(f"gini_index_method: {gini_index_method}")
-
-            # # Gini Repo - Logs per file
-            # # ---------------------
-            #
-            # # Count the number of logs in each file and put the counts in an array
-            # logs_counts = []
-            # for count in repo_logs["relative-file-path"].value_counts():
-            #     logs_counts.append(count)
-            #
-            # # Create an array of log counts per file in the repo and initialise each to 0
-            # total_logs_per_file = [0] * count_module
-            #
-            # gini_index_file = 0
-            #
-            # logging.info(f"Logs per file BEFORE: {total_logs_per_file}")
-            # logging.info(f"logs_counts: {logs_counts}")
-            #
-            # # Replace elements at the start with the counts saved earlier
-            # if len(logs_counts) > 0:
-            #     total_logs_per_file[0:len(logs_counts)] = logs_counts
-            #
-            #     logging.info(f"Logs per file AFTER: {total_logs_per_file}")
-            #
-            #     gini_index_file = self.gini(total_logs_per_file)
-            #
-            #     logging.info(f"Gini index: {gini_index_file}")
 
             # Save Gini Indexes
             gini_df = gini_df.append(
