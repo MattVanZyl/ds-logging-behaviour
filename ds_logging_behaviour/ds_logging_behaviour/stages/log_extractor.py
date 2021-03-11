@@ -10,49 +10,6 @@ from pydriller import GitRepository
 from pygount import SourceAnalysis, ProjectSummary
 
 
-# all_repository_data json structure:
-
-# {
-#   "repository_id" : {
-#     "repository_name" : "name",
-#     "repository_type" : "ds",
-#     "total_file_count" : 23,
-#     "python_modules" : {
-#       "file_path" : {
-#         "lines" : [
-#           "some line",
-#           "another line",
-#           "yet another line"
-#           ],
-#         "functions" : [
-#             {
-#             "start_line" : 4,
-#             "end_line" : 7
-#             },
-#             {
-#             "start_line" : 8,
-#             "end_line" : 11
-#             }
-#         ],
-#         "classes" : [
-#             {
-#             "start_line" : 2,
-#             "end_line" : 5
-#             }
-#         ],
-#         "methods" : [
-#             {
-#             "start_line" : 2,
-#             "end_line" : 5
-#             }
-#         ]
-#       }
-#     },
-#     "lines_of_code" : 500
-#   }
-# }
-
-
 class LogExtractor(Stage):
     all_repository_data = {}
 
@@ -84,35 +41,31 @@ class LogExtractor(Stage):
 
         # Store the code of each module
         for file in python_files:
-
             # Get the path of the current file relative to its repo
             relative_path = file.replace(f"{Path(repository_path).absolute().resolve()}/", "")
-
             repository_data["python_modules"][relative_path] = {}
-
             # Save each line of code into the array "lines". Each "python_modules" key will have its own "lines" array
             lines = []
             try:
                 # Lines of code count
                 source_analysis = SourceAnalysis.from_file(file, "repo")
                 project_summary.add(source_analysis)
-                f = open(file, "r")
-                for x in f:
-                    lines.append(x.rstrip())
-                f.close()
+                file_contents = open(file, "r")
+                for line in file_contents:
+                    lines.append(line.rstrip())
+                file_contents.close()
             except FileNotFoundError:
                 logging.error(
                     f"{Color.RED}Error{Color.RESET} - File was not found: {file}")
             except UnicodeDecodeError:
                 source_analysis = SourceAnalysis.from_file(file, "repo", encoding="iso-8859-1")
                 project_summary.add(source_analysis)
-                f = open(file, "r", encoding="iso-8859-1")
-                for x in f:
-                    lines.append(x.rstrip())
-                f.close()
+                file_contents = open(file, "r", encoding="iso-8859-1")
+                for line in file_contents:
+                    lines.append(line.rstrip())
+                file_contents.close()
 
             repository_data["python_modules"][relative_path]["lines"] = lines
-
             repository_data["python_modules"][relative_path]['functions'] = []
             repository_data["python_modules"][relative_path]['classes'] = []
             repository_data["python_modules"][relative_path]['methods'] = []
@@ -120,7 +73,6 @@ class LogExtractor(Stage):
         repository_data["lines_of_code"] = project_summary.total_code_count
 
         # Get all of the classes, methods and functions inside of this module
-        # These are found using the semgrep patterns defined in "repo_metrics.yaml"
         components = json.loads(subprocess.check_output(
             f"semgrep --config {config['path_semgrep']}{config['input_semgrep_repo_metrics']} {repository_path} --json",
             shell=True))
@@ -129,7 +81,6 @@ class LogExtractor(Stage):
             # Pydriller ignores paths with '.git', do the same for the semgrep results
             if '.git' in result['path']:
                 continue
-
             # Get the path of the current file relative to its repo
             file_path = result['path'].split('/', 5)[5]
             # Get the start and end lines of the current class/method/function (referred to here as component)
