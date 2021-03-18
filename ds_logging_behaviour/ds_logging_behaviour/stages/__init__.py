@@ -7,7 +7,6 @@ from .repo_downloader import RepoDownloader
 from .log_extractor import LogExtractor
 from .log_sampler import LogSampler
 from .gini_calculator import GiniCalculator
-from .visualization import Visualization
 from .input_validator import InputValidator
 from .assembler_state import AssemblerState
 from .report_generator import ReportGenerator

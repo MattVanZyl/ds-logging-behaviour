@@ -5,4 +5,3 @@ pandas==0.25.2
 semgrep==0.40.0
 pydriller==1.15.4
 pygount==1.2.4
-seaborn==0.11.1

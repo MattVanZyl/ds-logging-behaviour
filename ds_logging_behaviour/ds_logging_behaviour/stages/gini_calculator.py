@@ -66,6 +66,8 @@ class GiniCalculator(Stage):
                      'gini-index-class',
                      'gini-index-method'])
 
+        total_repos = len(metrics_df)
+
         for index, row in metrics_df.iterrows():
             repository_id = row["repository-id"]
             repository_name = row["repository-name"]
@@ -74,6 +76,9 @@ class GiniCalculator(Stage):
             count_function = row["function-count"]
             count_class = row["class-count"]
             count_method = row["method-count"]
+
+            logging.info(
+                f" {Color.GREEN}{index}{Color.RESET}/{Color.GREEN}{total_repos}{Color.RESET} - ID: {Color.BLUE}{repository_id}{Color.RESET} Name: {Color.BLUE}{repository_name}{Color.RESET}")
 
             gini_index_file = self.calculateScopeGini(logs_df, repository_id, ScopeType.FILE, count_module)
             gini_index_module = self.calculateScopeGini(logs_df, repository_id, ScopeType.MODULE, count_module)
