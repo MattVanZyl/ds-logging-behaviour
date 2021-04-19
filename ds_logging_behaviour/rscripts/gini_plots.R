@@ -27,12 +27,11 @@ do_plots <- function(gini, title) {
     xlab("Gini Index")
   
   # Density Plot
-  d <- ggplot(data = giniData, aes(x = gini, fill = as.factor(repository.type))) 
-  d <- d + geom_density(alpha=0.25)
-  d <- d + theme(plot.title = element_text(hjust = 0.5))
-  d <- d + labs(fill = "Repository Type" )
-  d <- d + ylab("Density")
-  d <- d + xlab("Gini Index")
+  d <- ggplot(data = giniData, aes(x = gini, fill = as.factor(repository.type))) + 
+    geom_density(alpha=0.25) + 
+    theme(plot.title = element_text(hjust = 0.5)) + 
+    labs(fill = "Repository Type" ) + ylab("Density") + 
+    xlab("Gini Index")
   
   m <- grid.arrange(p,d)
   m
