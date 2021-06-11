@@ -60,11 +60,8 @@ class GiniCalculator(Stage):
             columns=['repository-id',
                      'repository-name',
                      'repository-type',
-                     'gini-index-file',
-                     'gini-index-module',
-                     'gini-index-function',
-                     'gini-index-class',
-                     'gini-index-method'])
+                     'gini-index',
+                     'scope-type'])
 
         total_repos = len(metrics_df)
 
@@ -87,17 +84,53 @@ class GiniCalculator(Stage):
             gini_index_method = self.calculateScopeGini(logs_df, repository_id, ScopeType.METHOD, count_method)
 
             # Save Gini Indexes
+            # gini_df = gini_df.append(
+            #     {'repository-id': repository_id,
+            #      'repository-name': repository_name,
+            #      'repository-type': repository_type,
+            #      'gini-index-file': gini_index_file,
+            #      'gini-index-module': gini_index_module,
+            #      'gini-index-function': gini_index_function,
+            #      'gini-index-class': gini_index_class,
+            #      'gini-index-method': gini_index_method},
+            #     ignore_index=True)
+
             gini_df = gini_df.append(
                 {'repository-id': repository_id,
                  'repository-name': repository_name,
                  'repository-type': repository_type,
-                 'gini-index-file': gini_index_file,
-                 'gini-index-module': gini_index_module,
-                 'gini-index-function': gini_index_function,
-                 'gini-index-class': gini_index_class,
-                 'gini-index-method': gini_index_method},
+                 'gini-index': gini_index_file,
+                 'scope-type': ScopeType.FILE.value},
+                ignore_index=True)
+            gini_df = gini_df.append(
+                {'repository-id': repository_id,
+                 'repository-name': repository_name,
+                 'repository-type': repository_type,
+                 'gini-index': gini_index_module,
+                 'scope-type': ScopeType.MODULE.value},
+                ignore_index=True)
+            gini_df = gini_df.append(
+                {'repository-id': repository_id,
+                 'repository-name': repository_name,
+                 'repository-type': repository_type,
+                 'gini-index': gini_index_function,
+                 'scope-type': ScopeType.FUNCTION.value},
+                ignore_index=True)
+            gini_df = gini_df.append(
+                {'repository-id': repository_id,
+                 'repository-name': repository_name,
+                 'repository-type': repository_type,
+                 'gini-index': gini_index_class,
+                 'scope-type': ScopeType.CLASS.value},
+                ignore_index=True)
+            gini_df = gini_df.append(
+                {'repository-id': repository_id,
+                 'repository-name': repository_name,
+                 'repository-type': repository_type,
+                 'gini-index': gini_index_method,
+                 'scope-type': ScopeType.METHOD.value},
                 ignore_index=True)
 
-            gini_df.to_csv(f"{config['path_output']}{config['output_gini_indexes']}", index=False)
+        gini_df.to_csv(f"{config['path_output']}{config['output_gini_indexes']}", index=False)
 
 
