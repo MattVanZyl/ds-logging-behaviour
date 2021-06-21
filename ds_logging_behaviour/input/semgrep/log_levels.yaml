@@ -1,8 +1,17 @@
 rules:
 
-  # Debug
-- id: DEBUG
-  pattern: $L.debug(...)
+  # Critical
+- id: CRITICAL
+  pattern: $L.critical(...)
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+  # Error
+- id: ERROR
+  pattern: $L.error(...)
   message: |
     Match found
   fix: |
@@ -18,28 +27,18 @@ rules:
   languages: [ python ]
   severity: WARNING
 
-
-  # Error
-- id: ERROR
-  pattern: $L.error(...)
-  message: |
-    Match found
-  fix: |
-  languages: [ python ]
-  severity: WARNING
-
-  # Critical
-- id: CRITICAL
-  pattern: $L.critical(...)
-  message: |
-    Match found
-  fix: |
-  languages: [ python ]
-  severity: WARNING
-
   # Info
 - id: INFO
   pattern: $L.info(...)
+  message: |
+    Match found
+  fix: |
+  languages: [ python ]
+  severity: WARNING
+
+  # Debug
+- id: DEBUG
+  pattern: $L.debug(...)
   message: |
     Match found
   fix: |

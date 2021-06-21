@@ -13,14 +13,32 @@ from pygount import SourceAnalysis, ProjectSummary
 class LogExtractor(Stage):
     all_repository_data = {}
 
-    repository_logs_df = pd.DataFrame(
-        columns=['log-id', 'repository-id', 'repository-type', 'repository-name', 'relative-file-path', 'line-number',
-                 'log-level',
-                 'log-statement', 'log-scope', 'log-scope-id', 'log-scope-lines', 'log-scope-content'])
+    repository_logs_df = pd.DataFrame(columns=[
+        'log-id',
+        'repository-id',
+        'repository-type',
+        'repository-name',
+        'relative-file-path',
+        'line-number',
+        'log-level',
+        'log-statement',
+        'log-scope',
+        'log-scope-id',
+        'log-scope-lines',
+        'log-scope-content',
+    ])
 
-    repository_metrics_df = pd.DataFrame(
-        columns=['repository-id', 'repository-type', 'repository-name', 'total-file-count', 'module-count',
-                 'class-count', 'method-count', 'function-count', 'lines-of-code'])
+    repository_metrics_df = pd.DataFrame(columns=[
+        'repository-id',
+        'repository-type',
+        'repository-name',
+        'repository-lines-of-code',
+        'total-file-count',
+        'module-count',
+        'class-count',
+        'method-count',
+        'function-count',
+    ])
 
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -74,7 +92,7 @@ class LogExtractor(Stage):
 
         # Get all of the classes, methods and functions inside of this module
         components = json.loads(subprocess.check_output(
-            f"semgrep --config {config['path_semgrep']}{config['input_semgrep_repo_metrics']} {repository_path} --json",
+            f"semgrep --quiet --config {config['path_semgrep']}{config['input_semgrep_repo_metrics']} {repository_path} --json",
             shell=True))
 
         for result in components['results']:
@@ -160,25 +178,27 @@ class LogExtractor(Stage):
         function_count = 0
         class_count = 0
         method_count = 0
+
         for file, value in self.all_repository_data[repository_id]["python_modules"].items():
             function_count += len(value['functions'])
             class_count += len(value['classes'])
             method_count += len(value['methods'])
 
+        # Includes non .py files
         total_file_count = self.all_repository_data[repository_id]["total_file_count"]
         lines_of_code = self.all_repository_data[repository_id]["lines_of_code"]
 
-        self.repository_metrics_df = self.repository_metrics_df.append(
-            {'repository-id': repository_id,
-             'repository-type': repository_type,
-             'repository-name': repository_name,
-             'total-file-count': total_file_count,
-             'module-count': module_count,
-             'class-count': class_count,
-             'method-count': method_count,
-             'function-count': function_count,
-             'lines-of-code': lines_of_code},
-            ignore_index=True)
+        self.repository_metrics_df = self.repository_metrics_df.append({
+            'repository-id': repository_id,
+            'repository-type': repository_type,
+            'repository-name': repository_name,
+            'repository-lines-of-code': lines_of_code,
+            'total-file-count': total_file_count,
+            'module-count': module_count,
+            'class-count': class_count,
+            'method-count': method_count,
+            'function-count': function_count,
+             }, ignore_index=True)
 
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -220,7 +240,7 @@ class LogExtractor(Stage):
             # Get all of the logs in the repo
             # These are found using the semgrep patterns defined in "log_levels.yaml"
             log_levels = json.loads(subprocess.check_output(
-                f"semgrep --config {config['path_semgrep']}{config['input_semgrep_log_levels']} {repository_path} --json",
+                f"semgrep --quiet --config {config['path_semgrep']}{config['input_semgrep_log_levels']} {repository_path} --json",
                 shell=True))
 
             # For each log found in the semgrep search:
@@ -238,14 +258,16 @@ class LogExtractor(Stage):
 
                 log_level = result['check_id'].split('.')[-1]
                 # Do not assign any log level for print statements
-                log_level = log_level if log_level != "Print" else ""
+                # log_level = log_level if log_level != "Print" else ""
 
                 # Get the log scope details and surrounding code
-                log_scope, log_scope_id, log_scope_content, log_scope_lines = self.get_log_scope(config,
-                                                                                                 repository_id,
-                                                                                                 log_file_path,
-                                                                                                 log_line_start,
-                                                                                                 log_line_end)
+                log_scope, log_scope_id, log_scope_content, log_scope_lines = self.get_log_scope(
+                    config,
+                    repository_id,
+                    log_file_path,
+                    log_line_start,
+                    log_line_end,
+                )
 
                 self.repository_logs_df = self.repository_logs_df.append(
                     {'log-id': log_id,

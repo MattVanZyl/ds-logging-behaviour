@@ -23,6 +23,6 @@ output_logs_sample: repo-logs-sample.csv
 output_gini_indexes: repo-gini-indexes.csv
 
 # Params
-log_sample_size: 100
+log_sample_size: 300
 log_context_lines_before: 7
 log_context_lines_after: 4
