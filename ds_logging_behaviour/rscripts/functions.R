@@ -37,42 +37,40 @@ source("functions_common.R")
 plot_annotated <- function(sample){
   
   # Get subsets of data with and without annotations
-  df = subset(sample, final.annotation!="#N/A")
-  df2 = subset(sample, final.annotation=="#N/A")
+  df = subset(sample, taxonomy!="#N/A")
+  df2 = subset(sample, taxonomy=="#N/A")
   
+  total = nrow(sample)
   na_counts = nrow(df2)
   repository_counts = count(df, repository.type)
   
-  p <- ggplot(data = df, aes(x = final.annotation, fill = as.factor(repository.type))) + 
+  display_title = sprintf("Categorised Logs Sample (%s)", total)
+  display_label_info = sprintf("Total: %s \nDS: %s \nNon-DS: %s \nInconclusive: %s", total, repository_counts[1,2], repository_counts[2,2], na_counts) 
+  
+  # Colours
+  colour_ds = "#cf5d5d"
+  colour_nonds = "#65a7d6"
+  
+  p <- ggplot(data = df, aes(x = taxonomy, fill = as.factor(repository.type))) + 
     geom_bar(position = 'dodge') +
-    theme(axis.text.x = element_text(angle = 55, hjust=1)) + 
-    xlab("category") +
+    xlab("Category") +
+    ylab("Count") +
+    ggtitle(display_title) +
     
     geom_label(
-      label=sprintf("ds: %s", repository_counts[1,2]), 
+      label=display_label_info, 
       x=-Inf, y=Inf,
-      hjust=-0.22, vjust=1.2,
-      # x=0.85,y=28,
-      label.padding = unit(0.55, "lines"), # Rectangle size around label
-      label.size = 0.35,
-      color = "black",fill=NA) + 
+      vjust = "inward", hjust = "inward",
+      label.padding = unit(0.35, "lines"), 
+      label.size = 0.20,
+      color = "black",
+      fill = alpha(c("white"),0.15)
+    ) +
     
-    geom_label(
-      label=sprintf("non-ds: %s", repository_counts[2,2]), 
-      x=-Inf, y=Inf,
-      hjust=-0.15, vjust=2.4,
-      label.padding = unit(0.55, "lines"), # Rectangle size around label
-      label.size = 0.35,
-      color = "black",fill=NA) +
-    
-    geom_label(
-      label=sprintf("inconclusive: %s", na_counts), 
-      x=-Inf, y=Inf,
-      hjust=-0.11, vjust=3.6,
-      label.padding = unit(0.55, "lines"), # Rectangle size around label
-      label.size = 0.35,
-      color = "black",fill=NA) +
-    
+    scale_fill_manual(values = c(colour_ds, colour_nonds)) +
+    theme_bw() + 
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(axis.text.x = element_text(angle = 55, hjust=1)) +
     labs(fill = "Repository Type" ) +
     
     geom_text(stat='count', aes(label=..count..), vjust=-0.25, position=position_dodge(width=0.9))
@@ -132,7 +130,7 @@ plot_annotated <- function(sample){
 # }
 #===============================================================================
 plot_log_distribution <- function(scope_type) {
-  df = giniData2
+  df = giniData
   
   breaks <- seq(0, 1, by=0.05)
   df$bins = cut(df$gini.index, 
@@ -179,7 +177,7 @@ plot_log_distribution <- function(scope_type) {
 }
 
 plot_log_density <- function(scope_type) {
-  df = giniData2
+  df = giniData
   
   # Colours
   colour_ds = "#cf5d5d"

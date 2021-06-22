@@ -2,12 +2,14 @@ source("functions_common.R")
 
 plot_scope_count <- function(repo_type, scope_type) {
   
-  breaks <- seq(0, 1, by=0.05)
-  giniData2$bins = cut(giniData2$gini.index, 
-                       breaks=breaks, 
-                       include.lowest=TRUE)
+  df = giniData
   
-  data = subset(giniData2, scope.type == scope_type & repository.type == repo_type)
+  breaks <- seq(0, 1, by=0.05)
+  df$bins = cut(df$gini.index, 
+                breaks=breaks, 
+                include.lowest=TRUE)
+  
+  data = subset(df, scope.type == scope_type & repository.type == repo_type)
   
   breaks <- 10^(-10:10)
   minor_breaks <- rep(1:9, 21)*(10^rep(-10:10, each=9))
@@ -67,12 +69,14 @@ plot_scope_count <- function(repo_type, scope_type) {
 # ==============================================================================
 plot_loc <- function(repo_type, scope_type) {
   
-  breaks <- seq(0, 1, by=0.05)
-  giniData2$bins = cut(giniData2$gini.index, 
-                       breaks=breaks, 
-                       include.lowest=TRUE)
+  df = giniData
   
-  data = subset(giniData2, scope.type == scope_type & repository.type == repo_type)
+  breaks <- seq(0, 1, by=0.05)
+  df$bins = cut(df$gini.index, 
+                breaks=breaks, 
+                include.lowest=TRUE)
+  
+  data = subset(df, scope.type == scope_type & repository.type == repo_type)
   
   breaks <- 10^(-10:10)
   minor_breaks <- rep(1:9, 21)*(10^rep(-10:10, each=9))
@@ -114,12 +118,15 @@ plot_loc <- function(repo_type, scope_type) {
 # ==============================================================================
 plot_log_count <- function(repo_type, scope_type) {
   
-  breaks <- seq(0, 1, by=0.05)
-  giniData2$bins = cut(giniData2$gini.index, 
-                       breaks=breaks, 
-                       include.lowest=TRUE)
+  df = giniData
   
-  data = subset(giniData2, scope.type == scope_type & repository.type == repo_type)
+  breaks <- seq(0, 1, by=0.05)
+  df$bins = cut(df$gini.index, 
+                breaks=breaks, 
+                include.lowest=TRUE)
+  
+  
+  data = subset(df, scope.type == scope_type & repository.type == repo_type)
   
   breaks <- 10^(-10:10)
   minor_breaks <- rep(1:9, 21)*(10^rep(-10:10, each=9))

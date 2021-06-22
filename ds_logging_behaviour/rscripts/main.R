@@ -1,9 +1,19 @@
 
 source("functions_counts.R")
+source("functions_levels.R")
 source("functions.R")
 
-#plot_annotated(logSample)
-#plot_annotated(logSample2)
+# plot_annotated(logsSample)
+
+# plot_levels("ds", "file", "print")
+# plot_levels("non-ds", "file", "print")
+# plot_levels("ds", "file", "warning")
+# plot_levels("non-ds", "file", "warning")
+
+plot_levels("ds", "file", "debug", 1e4)
+plot_levels("non-ds", "file", "debug", 1e4)
+
+# plot_levels("non-ds", "file", "print")
 
 ## -----------------------------
 # File
@@ -17,8 +27,8 @@ source("functions.R")
 # plot_log_density("file")
 ## -----------------------------
 # Class
-plot_scope_count("ds", "class")
-plot_scope_count("non-ds", "class")
+# plot_scope_count("ds", "class")
+# plot_scope_count("non-ds", "class")
 # plot_loc("ds", "class")
 # plot_loc("non-ds", "class")
 # plot_log_count("ds", "class")
@@ -33,7 +43,7 @@ plot_scope_count("non-ds", "class")
 # plot_loc("non-ds", "module")
 # plot_log_count("ds", "module")
 # plot_log_count("non-ds", "module")
-# plot_log_distribution("module") 
+# plot_log_distribution("module")
 # plot_log_density("module")
 ## -----------------------------
 # function
@@ -43,7 +53,7 @@ plot_scope_count("non-ds", "class")
 # plot_loc("non-ds", "function")
 # plot_log_count("ds", "function")
 # plot_log_count("non-ds", "function")
-# plot_log_distribution("function") 
+# plot_log_distribution("function")
 # plot_log_density("function")
 ## -----------------------------
 # # method
