@@ -80,16 +80,12 @@ class GiniCalculator(Stage):
             'repository-name',
             'repository-type',
             'repository-lines-of-code',
-            'gini-index',
             'scope-type',
+            'scope-gini-index',
             'scope-count',
             'scope-log-count',
-            'scope-log-level-critical',
-            'scope-log-level-error',
-            'scope-log-level-warning',
-            'scope-log-level-info',
-            'scope-log-level-debug',
-            'scope-log-level-print',
+            'scope-log-level-type',
+            'scope-log-level-count',
         ])
 
         total_repos = len(metrics_df)
@@ -99,139 +95,38 @@ class GiniCalculator(Stage):
             repository_name = row["repository-name"]
             repository_type = row["repository-type"]
             repository_lines_of_code = row["repository-lines-of-code"]
-            # Number of modules corresponds to number of python files.
-            count_file = row["module-count"]
-            count_module = row["module-count"]
-            count_function = row["function-count"]
-            count_class = row["class-count"]
-            count_method = row["method-count"]
 
             logging.info(
                 f" {Color.GREEN}{index + 1}{Color.RESET}/{Color.GREEN}{total_repos}{Color.RESET} - ID: {Color.BLUE}{repository_id}{Color.RESET} Name: {Color.BLUE}{repository_name}{Color.RESET}")
 
-            gini_index_file = self.calculate_scope_gini(logs_df, repository_id, ScopeType.FILE, count_module)
-            gini_index_module = self.calculate_scope_gini(logs_df, repository_id, ScopeType.MODULE, count_module)
-            gini_index_function = self.calculate_scope_gini(logs_df, repository_id, ScopeType.FUNCTION, count_function)
-            gini_index_class = self.calculate_scope_gini(logs_df, repository_id, ScopeType.CLASS, count_class)
-            gini_index_method = self.calculate_scope_gini(logs_df, repository_id, ScopeType.METHOD, count_method)
+            for scope in ScopeType:
 
-            gini_df = gini_df.append({
-                'repository-id': repository_id,
-                'repository-name': repository_name,
-                'repository-type': repository_type,
-                'repository-lines-of-code': repository_lines_of_code,
-                'gini-index': gini_index_file,
-                'scope-type': ScopeType.FILE.value,
-                'scope-count': count_file,
-                'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, ScopeType.FILE,),
+                scope_count = 0
+                if scope == ScopeType.FILE:
+                    # Number of modules corresponds to number of python files.
+                    scope_count = row["module-count"]
+                elif scope == ScopeType.MODULE:
+                    scope_count = row["module-count"]
+                elif scope == ScopeType.FUNCTION:
+                    scope_count = row["function-count"]
+                elif scope == ScopeType.CLASS:
+                    scope_count = row["class-count"]
+                elif scope == ScopeType.METHOD:
+                    scope_count = row["method-count"]
 
-                'scope-log-level-critical': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                               LogLevelType.CRITICAL),
-                'scope-log-level-error': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                            LogLevelType.ERROR),
-                'scope-log-level-warning': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                              LogLevelType.WARNING),
-                'scope-log-level-info': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                           LogLevelType.INFO),
-                'scope-log-level-debug': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                            LogLevelType.DEBUG),
-                'scope-log-level-print': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FILE,
-                                                                            LogLevelType.PRINT),
-            }, ignore_index=True)
-
-            gini_df = gini_df.append({
-                'repository-id': repository_id,
-                'repository-name': repository_name,
-                'repository-type': repository_type,
-                'repository-lines-of-code': repository_lines_of_code,
-                'gini-index': gini_index_module,
-                'scope-type': ScopeType.MODULE.value,
-                'scope-count': count_module,
-                'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, ScopeType.MODULE, ),
-
-                'scope-log-level-critical': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.CRITICAL),
-                'scope-log-level-error': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.ERROR),
-                'scope-log-level-warning': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.WARNING),
-                'scope-log-level-info': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.INFO),
-                'scope-log-level-debug': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.DEBUG),
-                'scope-log-level-print': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.MODULE, LogLevelType.PRINT),
-            }, ignore_index=True)
-
-            gini_df = gini_df.append({
-                'repository-id': repository_id,
-                'repository-name': repository_name,
-                'repository-type': repository_type,
-                'repository-lines-of-code': repository_lines_of_code,
-                'gini-index': gini_index_function,
-                'scope-type': ScopeType.FUNCTION.value,
-                'scope-count': count_function,
-                'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, ScopeType.FUNCTION, ),
-
-                'scope-log-level-critical': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                               LogLevelType.CRITICAL),
-                'scope-log-level-error': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                            LogLevelType.ERROR),
-                'scope-log-level-warning': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                              LogLevelType.WARNING),
-                'scope-log-level-info': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                           LogLevelType.INFO),
-                'scope-log-level-debug': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                            LogLevelType.DEBUG),
-                'scope-log-level-print': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.FUNCTION,
-                                                                            LogLevelType.PRINT),
-            }, ignore_index=True)
-
-            gini_df = gini_df.append({
-                'repository-id': repository_id,
-                'repository-name': repository_name,
-                'repository-type': repository_type,
-                'repository-lines-of-code': repository_lines_of_code,
-                'gini-index': gini_index_class,
-                'scope-type': ScopeType.CLASS.value,
-                'scope-count': count_class,
-                'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, ScopeType.CLASS, ),
-
-                'scope-log-level-critical': self.get_total_log_levels_at_scope(logs_df, repository_id,
-                                                                               ScopeType.CLASS,
-                                                                               LogLevelType.CRITICAL),
-                'scope-log-level-error': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.CLASS,
-                                                                            LogLevelType.ERROR),
-                'scope-log-level-warning': self.get_total_log_levels_at_scope(logs_df, repository_id,
-                                                                              ScopeType.FUNCTION,
-                                                                              LogLevelType.WARNING),
-                'scope-log-level-info': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.CLASS,
-                                                                           LogLevelType.INFO),
-                'scope-log-level-debug': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.CLASS,
-                                                                            LogLevelType.DEBUG),
-                'scope-log-level-print': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.CLASS,
-                                                                            LogLevelType.PRINT),
-            }, ignore_index=True)
-
-            gini_df = gini_df.append({
-                'repository-id': repository_id,
-                'repository-name': repository_name,
-                'repository-type': repository_type,
-                'repository-lines-of-code': repository_lines_of_code,
-                'gini-index': gini_index_method,
-                'scope-type': ScopeType.METHOD.value,
-                'scope-count': count_method,
-                'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, ScopeType.METHOD, ),
-
-                'scope-log-level-critical': self.get_total_log_levels_at_scope(logs_df, repository_id,
-                                                                               ScopeType.METHOD,
-                                                                               LogLevelType.CRITICAL),
-                'scope-log-level-error': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.METHOD,
-                                                                            LogLevelType.ERROR),
-                'scope-log-level-warning': self.get_total_log_levels_at_scope(logs_df, repository_id,
-                                                                              ScopeType.FUNCTION,
-                                                                              LogLevelType.WARNING),
-                'scope-log-level-info': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.METHOD,
-                                                                           LogLevelType.INFO),
-                'scope-log-level-debug': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.METHOD,
-                                                                            LogLevelType.DEBUG),
-                'scope-log-level-print': self.get_total_log_levels_at_scope(logs_df, repository_id, ScopeType.METHOD,
-                                                                            LogLevelType.PRINT),
-            }, ignore_index=True)
+                for log_level in LogLevelType:
+                    gini_df = gini_df.append({
+                        'repository-id': repository_id,
+                        'repository-name': repository_name,
+                        'repository-type': repository_type,
+                        'repository-lines-of-code': repository_lines_of_code,
+                        'scope-type': scope.value,
+                        'scope-gini-index': self.calculate_scope_gini(logs_df, repository_id, scope, scope_count),
+                        'scope-count': scope_count,
+                        'scope-log-count': self.get_total_log_count_at_scope(logs_df, repository_id, scope),
+                        'scope-log-level-type': log_level.value,
+                        'scope-log-level-count': self.get_total_log_levels_at_scope(logs_df, repository_id, scope, log_level),
+                    }, ignore_index=True)
 
         gini_df.to_csv(f"{config['path_output']}{config['output_gini_indexes']}", index=False)
 

@@ -13,8 +13,8 @@ plot_scope_count <- function(repo_type, scope_type) {
   
   breaks <- 10^(-10:10)
   minor_breaks <- rep(1:9, 21)*(10^rep(-10:10, each=9))
-  
-  print(nrow(data))
+
+  write.csv(data,"test.csv", row.names = FALSE)
   
   # Heatmap colours
   colour_low = "#002540"
@@ -30,11 +30,15 @@ plot_scope_count <- function(repo_type, scope_type) {
   all_logs_in_one = nrow(subset(data, gini.index == 0 & scope.log.count != 0))
   gini_one = nrow(subset(data, gini.index == 1))
   
+  data = subset(data, scope.log.count != 0)
+  
   # Display text
   display_title = sprintf("%s: %s count VS gini index", toupper(repo_type), firstup(scope_type))
   display_label_y = sprintf("%s Count", firstup(scope_type))
   display_label_info = sprintf("Repos with gini index of zero: %s \n    Repos with no logs: %s \n    Repos with logs evenly distributed: %s \n\nRepos with gini index of one: %s", gini_zero, no_logs, all_logs_in_one, gini_one) 
   
+  plot_path = sprintf("./plots/%s/%s_scopecount_vs_gini_%s.png", scope_type, repo_type, scope_type)
+  png(plot_path)
   # Heatmap 
   p = ggplot(data, aes(x=bins, y=scope.count)) +
     geom_bin2d(binwidth = 0.10) +
@@ -45,8 +49,14 @@ plot_scope_count <- function(repo_type, scope_type) {
     scale_fill_gradient(low=colour_low, high=colour_high) +
     
     theme_bw() + 
-    theme(plot.title = element_text(hjust = 0.5)) +
-    theme(axis.text.x = element_text(angle = 55, hjust=1)) +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 25),
+      axis.title = element_text(size = 20),
+      axis.text = element_text(size = 16),
+      axis.text.x = element_text(angle = 55, hjust=1),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 12)
+    ) +
   
     xlab("Gini Index") +
     ylab(display_label_y) +
@@ -64,7 +74,7 @@ plot_scope_count <- function(repo_type, scope_type) {
       color = "black",
       fill = alpha(c("white"),0.15)
       ) 
-  p
+  ggsave(plot_path, width=20, height=10, units = "in", dpi = 300)
 }
 # ==============================================================================
 plot_loc <- function(repo_type, scope_type) {
